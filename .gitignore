@@ -1,0 +1,7 @@
+node_modules
+
+*.ini
+
+.tags1
+
+.git
