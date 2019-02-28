@@ -1,12 +1,28 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <van-tabbar v-model="active" id="nav" class="bor-1-top">
+      <van-tabbar-item @click.stop="go('/')" >Home</van-tabbar-item>
+      <van-tabbar-item @click.stop="go('/About')" class="bor-1-left">About</van-tabbar-item>
+      <van-tabbar-item @click.stop="go('/myOrders')" class="bor-1-left">myOrders</van-tabbar-item>
+    </van-tabbar>
+    <router-view />
   </div>
 </template>
+<script >
+  export default {
+    data() {
+      return {
+        active: 1
+      }
+    },
+    methods: {
+      go (where) {
+        this.$router.push({path: where})
+        console.log(where)
+      }
+    }
+  }
+</script>
 
 <style lang="scss">
 #app {
@@ -16,14 +32,10 @@
   text-align: center;
   color: #2c3e50;
 }
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+.bor-1-left {
+  border-left: 1px solid #ccc;
+}
+.bor-1-top {
+  border-top: 1px solid #eee;
 }
 </style>
