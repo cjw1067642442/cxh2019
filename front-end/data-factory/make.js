@@ -10,7 +10,22 @@ http.createServer(function (request, response) {
     'Access-Control-Max-Age': '1000',
     // 'Content-Type': 'application/x-www-form-urlencoded'
   })
-  response.end(JSON.stringify(home))
+  let { url } = request;
+  let result = ''
+  switch (url) {
+    case '/order/list':
+      result = require('./ordlist.json')
+      break;
+    case '/cart/':
+      result = require('./cart.json')
+      break;
+    case '/cart/add':
+      console.log(request.parser);
+      break;
+    default:
+      result = home
+  }
+  response.end(JSON.stringify(result))
 }).listen(5656)
 
 console.log('http://127.0.0.1:5656');

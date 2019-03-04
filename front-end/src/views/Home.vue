@@ -19,14 +19,14 @@ export default {
   mounted () {
   },
   methods: {
-    getData() {
+    getData () {
       this.$ajax.get('http://localhost:5656')
-      .then(res => {
-        console.log(res)
-      })
-      .catch(err => {
-        console.log(err)
-      })
+        .then(res => {
+          console.log(res)
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
   }
 }

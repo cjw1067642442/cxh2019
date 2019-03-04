@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "flex.css": "^1.1.7",
     "promise": "^8.0.2",
     "qs": "^6.6.0",
     "vant": "^1.6.7",
