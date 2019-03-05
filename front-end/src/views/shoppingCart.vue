@@ -25,7 +25,6 @@
             :max='10000'
             :step='1' />
         </div>
-
       </div>
     </div>
     <div class="stopp-cart-footer" flex="main:justify cross:center">
@@ -78,7 +77,7 @@ export default {
     },
     // 全选的情况  取消 其中一个
     doSimgle (prod) {
-      if (!prod.selected) {
+      if (!prod.selected && this.selectAll) {
         this.isSimgleOne = true
       } else {
         this.selectAll = false
@@ -106,7 +105,6 @@ export default {
       })
       //
       this.$store.commit('payfor', selectedList)
-
       this.$router.push({
         path: '/payment'
       })
@@ -115,7 +113,7 @@ export default {
   computed: {
     ...mapState({
       // 选择的商品列表
-      selectedList: state => state.selectedList,
+      selectedList: state => state.selectedList
     }),
     // 选择的商品数量
     allSelProdNum () {
@@ -135,21 +133,23 @@ export default {
           allMoney += parseFloat(item.product_price) * item.quantity
         }
       })
+      //
+      this.$store.commit('changeAllMoney', allMoney)
       return allMoney
     }
   }
 }
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 .shopping-cart {
+  box-sizing: border-box;
   height: 100%;
   padding-bottom: 50px;
+  background: #F2F2F3;
 }
 .cart-list {
   padding: 15px;
-  height: 100%;
-  background: #F2F2F3;
 
   .cart-item {
     box-sizing: border-box;
@@ -197,6 +197,7 @@ export default {
   margin-left: 6px;
 }
 .stopp-cart-footer {
+  box-sizing: border-box;
   position: fixed;
   left: 0;
   right: 0;

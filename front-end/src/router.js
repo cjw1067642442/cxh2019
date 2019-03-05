@@ -40,6 +40,11 @@ export default new Router({
       path: '/payment',
       name: 'payment',
       component: () => import(/* webpackChunkName: "payment" */ './views/payment.vue')
+    },
+    {
+      path: '/address',
+      name: 'address',
+      component: () => import(/* webpackChunkName: "address" */ './views/address.vue')
     }
   ]
 })

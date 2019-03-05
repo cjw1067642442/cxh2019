@@ -5,12 +5,16 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    selectedList: []
+    selectedList: [],
+    allMoney: 0
   },
   mutations: {
     payfor(state, newList) {
       state.selectedList = [...newList]
-      console.log(newList);
+    },
+    changeAllMoney(state, newVal) {
+      console.log(newVal);
+      state.allMoney = newVal
     }
   },
   actions: {

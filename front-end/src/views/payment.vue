@@ -1,20 +1,22 @@
 <template lang='html'>
   <div class='payment-page'>
     <van-nav-bar
-      :title='msg'
+      title='购物车'
       left-text=''
       left-arrow
       :border='false'
       @click-left='onClickLeft'
     />
     <!-- 地址 -->
-    <div class="paid-addr" flex="cross:center">
-      <img src="" alt="">
-      <div class="addr-tx">
-        <div>姚明</div>
-        <div>广东省 深圳市 南山区 某某街道   某某小区10栋110号 </div>
+    <div class="paid-addr" flex="cross:center main:justify">
+      <div flex="cross:center main:justify">
+        <img src="" alt="">
+        <div class="addr-tx">
+          <div>姚明</div>
+          <div>广东省 深圳市 南山区 某某街道   某某小区10栋110号 </div>
+        </div>
       </div>
-      <span class="arr-right">&gt;</span>
+      <span class="arr-right"><i class="van-icon van-icon-arrow-left van-nav-bar__arrow"></i></span>
     </div>
     <!-- 商品列表 -->
     <div class='cart-list'>
@@ -26,11 +28,13 @@
             <div class='tx-c-red'>¥{{prod.product_price}}</div>
           </div>
         </div>
+        <div class="cart-qua tx-c-666">x{{prod.quantity}}</div>
       </div>
     </div>
-    <div class="stopp-cart-footer" flex="main:justify cross:center">
+    <div class="stopp-cart-footer" flex="dir:right cross:center">
       <div flex="cross:center" class="no-wrap">
-        <van-button size="large" class="settlement-btn van-hairline--surround" :round="true">结算</van-button>
+        <div class="tx-c-333">合计：<strong class="tx-c-red">¥{{allMoney}}</strong></div>
+        <button type="button" name="button" class="sub-money-btn" @click="payforMoney">提交订单</button>
       </div>
     </div>
   </div>
@@ -42,38 +46,22 @@ import { mapState } from 'vuex'
 export default {
   data () {
     return {
-      msg: '12312312'
+      testSelList: []
     }
   },
   methods: {
     onClickLeft () {
       this.$router.go(-1)
     },
-    // 全选的情况  取消 其中一个
-    doSimgle (prod) {
-      if (!prod.selected) {
-        this.isSimgleOne = true
-      } else {
-        this.selectAll = false
-      }
-      prod.selected = !prod.selected
-
-    },
-    // 选择 或者 取消 全部
-    selectAllPro (result) {
-      this.selectAll = !this.selectAll
-      if (!this.isSimgleOne) {
-        this.shoppingList.forEach(item => {
-          item.selected = this.selectAll
-        })
-      }
-      this.isSimgleOne = false
+    payforMoney () {
+      console.log(this.$store.selectedList);
     }
   },
   computed: {
     ...mapState({
       // 选择的商品列表
-      selectedList: state => state.selectedList
+      selectedList: state => state.selectedList,
+      allMoney: state => state.allMoney
     }),
     // 选择的商品数量
     allSelProdNum () {
@@ -99,10 +87,12 @@ export default {
 }
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 .payment-page {
+  box-sizing: border-box;
   height: 100%;
   padding-bottom: 50px;
+  background: #F2F2F3;
 }
 .paid-addr {
   margin-bottom: 12px;
@@ -121,22 +111,21 @@ export default {
     line-height: 17px;
   }
   .arr-right {
-    font-size: 22px;
-    font-weight: 600;
-    transform: scale3d(1,2,1);
     color: #D1D1D6;
+    transform: rotateZ(180deg);
+    .van-nav-bar__arrow {
+      font-size: 20px;
+    }
   }
 }
 .cart-list {
-  padding: 15px;
-  height: 100%;
-  background: #F2F2F3;
+  padding: 15px 0;
 
   .cart-item {
     box-sizing: border-box;
     margin-bottom: 10px;
     padding: 15px;
-    border-radius: 6px;
+    // border-radius: 6px;
     background: #FFF;
 
     .cart-main {
@@ -163,6 +152,11 @@ export default {
         }
       }
     }
+
+    .cart-qua {
+      position: relative;
+      top: -5px;
+    }
   }
 }
 .check-box {
@@ -183,7 +177,6 @@ export default {
   right: 0;
   bottom: 0;
   height: 50px;
-  padding: 5px 15px;
   background-color: #FFF;
 
   .van-checkbox__label {
@@ -192,8 +185,14 @@ export default {
   strong {
     font-size: 14px;
   }
-  .settlement-btn {
-    margin-left: 9px;
+
+  .sub-money-btn {
+    margin-left: 19px;
+    width:120px;
+    height:50px;
+    font-size: 16px;
+    color: #FFF;
+    background:linear-gradient(90deg,rgba(255,137,85,1) 0%,rgba(214,69,76,1) 100%);
   }
 }
 </style>
