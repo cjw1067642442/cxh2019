@@ -43,6 +43,11 @@ export default {
       }
     }
   },
+  created() {
+    Toast(JSON.stringify(this.$route.params))
+    this.defaultInfo.phone = this.$route.params.tel
+    this.defaultInfo.phone = this.$route.params.address
+  },
   methods: {
     onClickLeft() {
       this.$router.push({

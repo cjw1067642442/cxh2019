@@ -17,7 +17,7 @@
           <div><span class="def-icon tx-c-red" v-if="addr.is_default==1">默认</span><span>{{addr.region + addr.address}}</span></div>
           <div class="fix-addr-space">
             <i class="gr-line"></i>
-            <span class="edi-addr-btn"></span>
+            <span class="edi-addr-btn" @click.stop="editAddr(addr)"></span>
           </div>
         </div>
       </div>
@@ -38,25 +38,31 @@ export default {
   },
   mounted () {
     this.addrList = [{
-       address: "\u5357\u5c71\u533a\u67d0\u67d0\u8857\u90533\u53f7",
-       name: "\u59da\u660e",
-       phone: "13112345678",
-       region: "\u5e7f\u4e1c\u7701\u9633\u6c5f\u5e02\u6c5f\u57ce\u533a",
-       region_id: "440000,441700,441702",
-       is_default: "1"
-     }, {
-       address: "\u6df1\u5733\u5e02\u5357\u5c71\u533a\u67d0\u67d0\u8857\u90531\u53f7",
-       name: "\u9648\u51a0\u5e0c66 ",
-       phone: "13112345678 ",
-       region: "\u5e7f\u4e1c\u7701\u9633\u6c5f\u5e02\u6c5f\u57ce\u533a",
-       region_id: "440000,441700,441702 ",
-       is_default: "0"
+      address: "\u5357\u5c71\u533a\u67d0\u67d0\u8857\u90533\u53f7",
+      name: "\u59da\u660e",
+      phone: "18****678",
+      region: "\u5e7f\u4e1c\u7701\u9633\u6c5f\u5e02\u6c5f\u57ce\u533a",
+      region_id: "440000,441700,441702",
+      is_default: "1"
+    }, {
+      address: "\u6df1\u5733\u5e02\u5357\u5c71\u533a\u67d0\u67d0\u8857\u90531\u53f7",
+      name: "\u9648\u51a0\u5e0c66",
+      phone: "13****678 ",
+      region: "\u5e7f\u4e1c\u7701\u9633\u6c5f\u5e02\u6c5f\u57ce\u533a",
+      region_id: "440000,441700,441702 ",
+      is_default: "0"
     }]
   },
   methods: {
     onClickLeft () {
       this.$router.go(-1)
     },
+    editAddr(addr) {
+      this.$router.push({
+        name: 'editaddress',
+        params: addr
+      })
+    }
   }
 }
 </script>

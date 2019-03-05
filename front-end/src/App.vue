@@ -8,17 +8,6 @@
 <script >
 
 export default {
-  data () {
-    return {
-      active: 1
-    }
-  },
-  methods: {
-    go (where) {
-      this.$router.push({ path: where })
-      console.log(where)
-    }
-  }
 }
 
 </script>
