@@ -6,7 +6,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     selectedList: [],
-    allMoney: 0
+    allMoney: 0,
+    areaList: require('../data-factory/area.js').default
   },
   mutations: {
     payfor(state, newList) {

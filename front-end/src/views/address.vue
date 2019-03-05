@@ -8,19 +8,23 @@
       @click-left='onClickLeft'
     />
     <div class="addr-list">
-      <div class="addr-item">
+      <div class="addr-item" v-for="addr in addrList">
         <div>
-          <strong class="addr-name tx-c-333">陈冠希</strong>
-          <span class="tx-c-999">131****7262</span>
+          <strong class="addr-name tx-c-333">{{addr.name}}</strong>
+          <span class="tx-c-999">{{addr.phone}}</span>
         </div>
-        <div flex="cross:top">
-          <span class="def-icon tx-c-red">默认</span><span>广东省 深圳市 南山区 某某街道 某某小区10栋 110号</span>
+        <div flex="cross:top main:justify">
+          <div><span class="def-icon tx-c-red" v-if="addr.is_default==1">默认</span><span>{{addr.region + addr.address}}</span></div>
           <div class="fix-addr-space">
             <i class="gr-line"></i>
             <span class="edi-addr-btn"></span>
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="addr-footer">
+      <van-button class="add-addr-btn" to="/editaddress">添加地址</van-button>
     </div>
   </div>
 </template>
@@ -29,14 +33,30 @@
 export default {
   data() {
     return {
-
+      addrList: []
     }
+  },
+  mounted () {
+    this.addrList = [{
+       address: "\u5357\u5c71\u533a\u67d0\u67d0\u8857\u90533\u53f7",
+       name: "\u59da\u660e",
+       phone: "13112345678",
+       region: "\u5e7f\u4e1c\u7701\u9633\u6c5f\u5e02\u6c5f\u57ce\u533a",
+       region_id: "440000,441700,441702",
+       is_default: "1"
+     }, {
+       address: "\u6df1\u5733\u5e02\u5357\u5c71\u533a\u67d0\u67d0\u8857\u90531\u53f7",
+       name: "\u9648\u51a0\u5e0c66 ",
+       phone: "13112345678 ",
+       region: "\u5e7f\u4e1c\u7701\u9633\u6c5f\u5e02\u6c5f\u57ce\u533a",
+       region_id: "440000,441700,441702 ",
+       is_default: "0"
+    }]
   },
   methods: {
     onClickLeft () {
       this.$router.go(-1)
     },
-
   }
 }
 </script>
@@ -45,7 +65,6 @@ export default {
 .addr-list-page {
   height: 100%;
   background: #F2F2F3;
-
 
   .addr-list {
     background-color: #FFF;
@@ -96,6 +115,22 @@ export default {
       margin-right: 10px;
       height: 22px;
       line-height: 22px;
+      font-size: 16px;
+    }
+  }
+
+  .addr-footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 50px;
+
+    .add-addr-btn {
+      display: block;
+      width: 100%;
+      height: 100%;
+      text-align: center;
       font-size: 16px;
     }
   }

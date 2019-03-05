@@ -45,6 +45,11 @@ export default new Router({
       path: '/address',
       name: 'address',
       component: () => import(/* webpackChunkName: "address" */ './views/address.vue')
+    },
+    {
+      path: '/editaddress',
+      name: 'editaddress',
+      component: () => import(/* webpackChunkName: "editaddress" */ './views/editAddress.vue')
     }
   ]
 })
