@@ -1,6 +1,6 @@
 <template>
   <div id="app" class="cxh-app">
-    <transition name="van-slide-right">
+    <transition name="van-fade" mode="out-in">
       <router-view />
     </transition>
   </div>

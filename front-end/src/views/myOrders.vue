@@ -224,7 +224,7 @@ export default {
           console.log(res);
         })
         .catch(err => {
-          Toast(err)
+          Toast(err + '1')
         })
     },
     getImgs () {

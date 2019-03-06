@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import { Toast } from 'vant'
 import { mapState } from 'vuex'
 
 export default {
@@ -49,27 +50,11 @@ export default {
       selectAll: false,
       // 是否 是 取消 一个
       isSimgleOne: false,
-      shoppingList: []
+      // shoppingList: []
     }
   },
   mounted () {
-    this.shoppingList = [{
-      quantity: 1,
-      product_id: 1,
-      product_title: '\u4ea7\u54c1 001',
-      product_price: '10.00',
-      product_img: '',
-      create_time: 1551507879,
-      selected: false
-    }, {
-      quantity: 1,
-      product_id: 2,
-      product_title: '\u4ea7\u54c1 002',
-      product_price: '1.00',
-      product_img: '',
-      create_time: 1551507939,
-      selected: false
-    }]
+    // this.$store.state.shoppingList = []
   },
   methods: {
     onClickLeft () {
@@ -89,7 +74,7 @@ export default {
     selectAllPro (result) {
       this.selectAll = !this.selectAll
       if (!this.isSimgleOne) {
-        this.shoppingList.forEach(item => {
+        this.$store.state.shoppingList.forEach(item => {
           item.selected = this.selectAll
         })
       }
@@ -104,6 +89,10 @@ export default {
         }
       })
       //
+      if (selectedList.length === 0) {
+        return Toast('请选择你要购买的物品')
+      }
+      //
       this.$store.commit('payfor', selectedList)
       this.$router.push({
         path: '/payment'
@@ -113,12 +102,13 @@ export default {
   computed: {
     ...mapState({
       // 选择的商品列表
-      selectedList: state => state.selectedList
+      selectedList: 'selectedList',
+      shoppingList: 'shoppingList'
     }),
     // 选择的商品数量
     allSelProdNum () {
       let result = 0;
-      this.shoppingList.forEach(item => {
+      this.$store.state.shoppingList.forEach(item => {
         if (item.selected) {
           result += item.quantity
         }
@@ -128,7 +118,7 @@ export default {
     // 选择的商品总价
     allSelMoney () {
       let allMoney = 0;
-      this.shoppingList.forEach(item => {
+      this.$store.state.shoppingList.forEach(item => {
         if (item.selected) {
           allMoney += parseFloat(item.product_price) * item.quantity
         }

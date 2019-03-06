@@ -8,7 +8,7 @@
       @click-left='onClickLeft'
     />
     <div class="addr-list">
-      <div class="addr-item" v-for="addr in addrList">
+      <div class="addr-item" v-for="addr in addrList" @click.stop="selAddr(addr)">
         <div>
           <strong class="addr-name tx-c-333">{{addr.name}}</strong>
           <span class="tx-c-999">{{addr.phone}}</span>
@@ -30,13 +30,20 @@
 </template>
 
 <script>
+import { Toast } from 'vant'
+
 export default {
   data() {
     return {
-      addrList: []
+      addrList: [],
+      comeFrom: ''
     }
   },
   mounted () {
+    if (this.$route.query.come) {
+      this.comeFrom = this.$route.query.come
+    }
+
     this.addrList = [{
       address: "\u5357\u5c71\u533a\u67d0\u67d0\u8857\u90533\u53f7",
       name: "\u59da\u660e",
@@ -44,7 +51,8 @@ export default {
       region: "\u5e7f\u4e1c\u7701\u9633\u6c5f\u5e02\u6c5f\u57ce\u533a",
       region_id: "440000,441700,441702",
       is_default: "1"
-    }, {
+    },
+    {
       address: "\u6df1\u5733\u5e02\u5357\u5c71\u533a\u67d0\u67d0\u8857\u90531\u53f7",
       name: "\u9648\u51a0\u5e0c66",
       phone: "13****678 ",
@@ -57,10 +65,34 @@ export default {
     onClickLeft () {
       this.$router.go(-1)
     },
+    // 选择地址
+    selAddr (addr) {
+      if (this.comeFrom) {
+        this.$router.push({
+          name: this.comeFrom,
+          params: addr
+        })
+      }
+    },
+    // 修改地址
     editAddr(addr) {
+      this.$store.commit('setDefaultInfo', {
+        id: addr.id,
+        name: addr.name,
+        tel: addr.phone,
+        addressDetail: addr.address,
+        areaCode: '110214',
+        isDefault: addr.is_default==='1'?true:false
+      })
       this.$router.push({
-        name: 'editaddress',
-        params: addr
+        name: 'editaddress'
+      })
+    },
+    // 添加地址
+    addAddr () {
+      this.$store.commit('setDefaultInfo', {})
+      this.$router.push({
+        path: '/editaddress',
       })
     }
   }

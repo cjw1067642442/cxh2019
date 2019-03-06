@@ -16,7 +16,7 @@
           <div>广东省 深圳市 南山区 某某街道   某某小区10栋110号 </div>
         </div>
       </div>
-      <span class="arr-right"><i class="van-icon van-icon-arrow-left van-nav-bar__arrow"></i></span>
+      <span class="arr-right" @click="selAddr"><i class="van-icon van-icon-arrow-left van-nav-bar__arrow"></i></span>
     </div>
     <!-- 商品列表 -->
     <div class='cart-list'>
@@ -41,20 +41,36 @@
 </template>
 
 <script>
+import { Toast } from 'vant'
 import { mapState } from 'vuex'
 
 export default {
+  name: 'payment',
   data () {
     return {
-      testSelList: []
+      defaultAddr: {
+        address: '',
+        name: '',
+        phone: '',
+        region: '',
+        region_id: '',
+        is_default: ''
+      }
     }
+  },
+  mounted () {
+    this.defaultAddr = this.$router.params
+    console.log(this.defaultAddr)
   },
   methods: {
     onClickLeft () {
       this.$router.go(-1)
     },
     payforMoney () {
-      console.log(this.$store.selectedList);
+      Toast(JSON.stringify(this.$store.state.selectedList))
+    },
+    selAddr () {
+      this.$router.push({ path: '/address', query: { come: 'payment' } })
     }
   },
   computed: {
@@ -192,6 +208,7 @@ export default {
     height:50px;
     font-size: 16px;
     color: #FFF;
+    border: none;
     background:linear-gradient(90deg,rgba(255,137,85,1) 0%,rgba(214,69,76,1) 100%);
   }
 }

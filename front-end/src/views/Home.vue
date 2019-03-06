@@ -1,11 +1,12 @@
 <template>
   <div class="home">
-    <van-button type="default">默认按钮</van-button>
-    <van-button type="primary">主要按钮</van-button>
-    <van-button type="info">信息按钮</van-button>
-    <van-button type="warning">警告按钮</van-button>
-    <van-button type="danger">危险按钮</van-button> |
+    <van-button type="default" to="/myOrders">myOrders</van-button>
+    <van-button type="primary" to="/shoppingcart">shoppingcart</van-button>
+    <van-button type="info" to="/payment">payment</van-button>
+    <van-button type="warning" to="/address">address</van-button>
+    <van-button type="danger" to="/editaddress">editaddress</van-button> |
     <van-button type="danger" to="/address">address</van-button>
+    <van-button type="danger" to="/product">product</van-button>
 
   </div>
 </template>
@@ -13,9 +14,6 @@
 <script>
 export default {
   name: 'home',
-  // components: {
-  //   HelloWorld
-  // },
   mounted () {
   },
   methods: {

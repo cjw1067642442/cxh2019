@@ -29,27 +29,14 @@ import { Toast } from 'vant'
 import { mapState } from 'vuex'
 
 export default {
-  data() {
+  data () {
     return {
       searchResult: [],
-      addrSaving: false,
-      defaultInfo: {
-        id: '001',
-        name: '收货人姓名',
-        tel: '16620981788',
-        addressDetail: '详细地址详细地址详细地址详细地址',
-        areaCode: "130531",
-        isDefault: true
-      }
+      addrSaving: false
     }
   },
-  created() {
-    Toast(JSON.stringify(this.$route.params))
-    this.defaultInfo.phone = this.$route.params.tel
-    this.defaultInfo.phone = this.$route.params.address
-  },
   methods: {
-    onClickLeft() {
+    onClickLeft () {
       this.$router.push({
         path: '/address',
         query: {
@@ -58,23 +45,24 @@ export default {
       })
     },
     // 修改 详细地址（街道地址） 时触发
-    onChangeDetail(val) {
+    onChangeDetail (val) {
       Toast(val)
     },
     // 切换是否使用默认地址时触发
-    changeDefault(value) {
+    changeDefault (value) {
       Toast(value+' 122')
     },
-    onSave(content) {
+    onSave (content) {
       Toast(JSON.stringify(content))
     },
-    onDelete(content) {
-      Toast(JSON.stringify(content));
+    onDelete (content) {
+      Toast(JSON.stringify(content))
     }
   },
   computed: {
     ...mapState({
-      areaList: 'areaList'
+      areaList: 'areaList',
+      defaultInfo: 'defaultInfo'
     })
   }
 }
