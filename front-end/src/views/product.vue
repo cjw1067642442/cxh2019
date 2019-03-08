@@ -17,11 +17,11 @@
       </van-swipe>
     </div>
     <div class="prod-main marg-5-bottom">
-      <div class="prod-name tx-c-333">加里曼丹沉香制荷和摆件</div>
-      <div class="prod-price"><strong class="tx-c-red">¥700.00</strong></div>
+      <div class="prod-name tx-c-333">{{productMsg.title}}</div>
+      <div class="prod-price"><strong class="tx-c-red">¥{{productMsg.price | rmb}}</strong></div>
     </div>
     <div class="prod-dec marg-5-bottom" flex="cross:center">
-      <span class="tx-c-999">说明:</span><span class="reword-icon">赠</span>&nbsp;&nbsp;<span class="tx-c-666">139个沉香果</span>
+      <span class="tx-c-999">说明:</span><span class="reword-icon">赠</span>&nbsp;&nbsp;<span class="tx-c-666">{{productMsg.member_points}}个沉香果</span>
     </div>
     <div class="prod-dec marg-5-bottom" flex="cross:center">
       <span class="tx-c-999">邮费:</span>&nbsp;&nbsp;<span class="tx-c-666">15元</span>
@@ -33,16 +33,13 @@
             <img v-for="img in decPicList" :src="img" alt="">
           </div>
         </van-tab>
-        <van-tab title="购买须知">
-          购买须知
-        </van-tab>
+        <van-tab title="购买须知" v-html="purchaseNotes" class="purchase-notes"></van-tab>
       </van-tabs>
     </div>
-    <!-- <div  flex="main:justify">
-    </div> -->
+    <!-- 底部购买 按钮 -->
     <van-row class="prod-btn-grop">
       <van-col span="4" flex="main:center">
-        <div class="shop-cart-btn"></div>
+        <router-link class="shop-cart-btn" to="/shoppingcart"></router-link>
       </van-col>
       <van-col span="10">
         <van-button class="cart-btn">加入购物车</van-button>
@@ -51,6 +48,7 @@
         <van-button class="buy-btn" @click="buyNow = true">立即购买</van-button>
       </van-col>
     </van-row>
+    <!-- 购买 选择尺寸 选择数量 窗口 -->
     <transition name="van-slide-up">
       <div class="select-win" v-show="buyNow">
         <span class="close-icon" @click.stop="buyNow = false">X</span>
@@ -70,7 +68,7 @@
           这里是条件
         </div>
         <div class="sure-btn">
-          <van-button type="button">确认</van-button>
+          <van-button type="button" @click="goToPay">确认</van-button>
         </div>
       </div>
     </transition>
@@ -79,21 +77,42 @@
 
 <script>
 const img = require('../assets/xnk.png')
+
 export default {
   data () {
     return {
       img: '',
       autoplay: 0,
-      imgsList: ['/jjs.png', '/jjsh.png'],
+      imgsList: ['/jjs.png'],
+      // 购买须知
+      purchaseNotes: '<p>这里是购买须知</p><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>这里是购买须知</p><p>这里是购买须知</p><p>这里是购买须知</p>',
       prodAct: '',
-      decPicList: [img,img,img,img],
-      buyNow: false
+      decPicList: [img, img, img, img],
+      buyNow: false,
+      productMsg: {
+        id:'2',
+        cate_id:'3',
+        title:'\u4ea7\u54c12',
+        thumb:'',
+        details:'',
+        price:'23.00',
+        price2:'0.0 0',
+        member_points:'10',
+        create_time:'0',
+        update_time:'0',
+        sort:'0',
+        stock:'100',
+        status:'1'
+      }
     }
   },
   methods: {
-    onClickLeft() {
+    onClickLeft () {
       // 返回列表页
       this.$router.push('/myOrders')
+    },
+    goToPay () {
+
     }
   }
 }
@@ -153,7 +172,7 @@ export default {
       width: 20px;
       height: 16px;
       font-size: 10px;
-      line-height: 16px;
+      line-height: 18px;
       color: #FFF;
       text-align: center;
       border-radius: 4px;
@@ -163,6 +182,10 @@ export default {
 
   .prod-nav {
     padding-bottom: 60px;
+  }
+  .purchase-notes {
+    padding: 10px 20px;
+    background-color: #fff;
   }
   .prod-btn-grop {
     position: fixed;

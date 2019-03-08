@@ -33,15 +33,14 @@
         <span class="chk-label tx-c-666">全选</span>
       </div>
       <div flex="cross:center" class="no-wrap">
-        <div class="com-msg tx-c-333">共{{allSelProdNum}}件商品&nbsp;合计：<strong class="tx-c-red">¥{{allSelMoney>0?allSelMoney:'0.00'}}</strong></div>
-        <van-button size="large" class="settlement-btn van-hairline--surround" :round="true" @click="payfor">结算</van-button>
+        <div class="com-msg tx-c-333">共{{allSelProdNum}}件商品&nbsp;合计：<strong class="tx-c-red">¥{{allSelMoney | rmb}}</strong></div>
+        <van-button size="large" class="settlement-btn" :round="true" @click="payfor">结算</van-button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { Toast } from 'vant'
 import { mapState } from 'vuex'
 
 export default {
@@ -54,6 +53,10 @@ export default {
     }
   },
   mounted () {
+    this.$ajax.get('/cart/')
+      .then(res => {
+        this.$toast(JSON.stringify(res))
+      })
     // this.$store.state.shoppingList = []
   },
   methods: {
@@ -90,7 +93,7 @@ export default {
       })
       //
       if (selectedList.length === 0) {
-        return Toast('请选择你要购买的物品')
+        return this.$toast('请选择你要购买的物品')
       }
       //
       this.$store.commit('payfor', selectedList)

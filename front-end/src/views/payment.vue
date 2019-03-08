@@ -33,7 +33,7 @@
     </div>
     <div class="stopp-cart-footer" flex="dir:right cross:center">
       <div flex="cross:center" class="no-wrap">
-        <div class="tx-c-333">合计：<strong class="tx-c-red">¥{{allMoney}}</strong></div>
+        <div class="tx-c-333">合计：<strong class="tx-c-red">¥{{allMoney | rmb}}</strong></div>
         <button type="button" name="button" class="sub-money-btn" @click="payforMoney">提交订单</button>
       </div>
     </div>
@@ -60,7 +60,6 @@ export default {
   },
   mounted () {
     this.defaultAddr = this.$router.params
-    console.log(this.defaultAddr)
   },
   methods: {
     onClickLeft () {

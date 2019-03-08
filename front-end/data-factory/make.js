@@ -22,6 +22,13 @@ http.createServer(function (request, response) {
     case '/cart/add':
       console.log(request.parser);
       break;
+    case '/err':
+      result = {
+        status: 0,
+        data: 'data',
+        msg: 'err msg'
+      }
+      break;
     default:
       result = home
   }

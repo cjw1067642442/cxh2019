@@ -7,18 +7,27 @@
     <van-button type="danger" to="/editaddress">editaddress</van-button> |
     <van-button type="danger" to="/address">address</van-button>
     <van-button type="danger" to="/product">product</van-button>
-
+    <div class="">
+    {{num | rmb}}
+    </div>
+    <van-button @click="getData">ajax</van-button>
   </div>
 </template>
 
 <script>
 export default {
   name: 'home',
+  data () {
+    return {
+      num: 10000.251
+    }
+  },
   mounted () {
+
   },
   methods: {
     getData () {
-      this.$ajax.get('http://localhost:5656')
+      this.$ajax.post('http://localhost:5656/err', { a: 123, b: 888 })
         .then(res => {
           console.log(res)
         })

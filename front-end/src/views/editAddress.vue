@@ -38,10 +38,7 @@ export default {
   methods: {
     onClickLeft () {
       this.$router.push({
-        path: '/address',
-        query: {
-          addrID: '001'
-        }
+        path: '/address'
       })
     },
     // 修改 详细地址（街道地址） 时触发

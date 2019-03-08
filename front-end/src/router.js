@@ -19,9 +19,9 @@ export default new Router({
       component: () => import(/* webpackChunkName: "myOrders" */ './views/myOrders.vue')
     },
     {
-      path: '/detail',
-      name: 'detail',
-      component: () => import(/* webpackChunkName: "detail" */ './views/detail.vue')
+      path: '/orderDetail',
+      name: 'orderDetail',
+      component: () => import(/* webpackChunkName: "orderDetail" */ './views/orderDetail.vue')
     },
     {
       path: '/shoppingcart',
