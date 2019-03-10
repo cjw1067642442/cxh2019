@@ -6,10 +6,11 @@
     <van-button type="warning" to="/address">address</van-button>
     <van-button type="danger" to="/editaddress">editaddress</van-button> |
     <van-button type="danger" to="/address">address</van-button>
-    <van-button type="danger" to="/product">product</van-button>
-    <div class="">
-    {{num | rmb}}
-    </div>
+    <van-button type="danger" to="/product">product</van-button> ->
+    <van-button type="danger" to="/redeem">redeem</van-button>
+    <van-button type="danger" to="/mymessage">mymessage</van-button>
+    <van-button type="danger" to="/msgDetail">msgDetail</van-button>
+
     <van-button @click="getData">ajax</van-button>
   </div>
 </template>

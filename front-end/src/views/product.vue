@@ -76,7 +76,6 @@
 </template>
 
 <script>
-const img = require('../assets/xnk.png')
 
 export default {
   data () {
@@ -87,7 +86,7 @@ export default {
       // 购买须知
       purchaseNotes: '<p>这里是购买须知</p><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>这里是购买须知</p><p>这里是购买须知</p><p>这里是购买须知</p>',
       prodAct: '',
-      decPicList: [img, img, img, img],
+      decPicList: [],
       buyNow: false,
       productMsg: {
         id:'2',
@@ -123,12 +122,9 @@ export default {
   height: 100%;
   background-color: #F2F2F3;
 
-  .van-nav-bar {
-    background-color: rgba(0,0,0,0);
-  }
-
   .prod-img {
-    height: 366px;
+    padding-top: 46px;
+    height: 375px;
     width: 100%;
     background-color: #ccc;
 
@@ -191,8 +187,8 @@ export default {
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 0;
-    z-index: 2;
+    bottom: -1px;
+    z-index: 100;
     width: 100%;
     height: 50px;
     font-size: 16px;

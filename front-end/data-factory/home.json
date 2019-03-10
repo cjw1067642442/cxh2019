@@ -1,5 +1,38 @@
-{
-  "code": 200,
-  "data": "123445666",
-  "msg": "success"
-}
+  {
+    "status": 1,
+    "msg": "",
+    "data": {
+      "id": "26",
+      "order_no": "58151951895",
+      "total": "32.00",
+      "total2": "0.00",
+      "member_points": "0",
+      "freight": "0.00",
+      "consignee": "\u9648\u5148\u751f",
+      "consignee_phone": "13712345678",
+      "shipping_address": "\u6df1\u5733\u5e02\u5357\u5c71\u533a\u67d0\u67d0\u8857\u90531\u53f7",
+      "shipping_company": "",
+      "shipping_code": "",
+      "payment_no": "",
+      "shipping_time": "0",
+      "payment_time": "0",
+      "payment_method": "0",
+      "remarks": "",
+      "create_time": "1551951912",
+      "create_ip": "167772674",
+      "status": "4",
+      "closing_time": "1552033592",
+      "details": [{
+        "id": "23",
+        "order_id": "26",
+        "quantity": "2",
+        "product_id": "1",
+        "product_title": "\u4ea7\u54c11",
+        "product_price": "16.00",
+        "product_img": "image\/a.jpg",
+        "product_spec": "",
+        "member_points": "0",
+        "product_spec_id": "1"
+      }]
+    }
+  }

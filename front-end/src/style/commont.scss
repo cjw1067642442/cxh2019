@@ -38,6 +38,7 @@ html,body {
     border-color: #FF8955;
   }
 }
+
 .settlement-btn {
   width: 100px;
   height: 40px;
@@ -64,4 +65,12 @@ html,body {
 }
 .tx-c-red {
   color: #D6454C;
+}
+
+.addr-icon {
+  margin-right: 12px;
+  width: 27px;
+  height: 27px;
+  background: url('../assets/dizhi.png') no-repeat center center;
+  background-size: 28px 28px;
 }

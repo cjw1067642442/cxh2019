@@ -30,51 +30,52 @@
         <img src="" alt="">
       </div>
     </div>
+    <!-- 地址 -->
     <div class="paid-addr" flex="cross:center">
-      <img src="" alt="">
+      <span class="addr-icon"></span>
       <div class="addr-tx">
-        <div>姚明</div>
-        <div>广东省 深圳市 南山区 某某街道   某某小区10栋110号 </div>
+        <div>{{data.consignee}}</div>
+        <div>{{data.shipping_address}}</div>
       </div>
     </div>
     <div class="card-content">
-      <div flex="main:justify" class="card-res-box" v-for="i in 2">
+      <div flex="main:justify" class="card-res-box" v-for="prod in data.details">
         <div class="card-left" flex="dir:left">
-          <img src="" />
-          <span>{{'card.title'}}</span>
+          <img :src="prod.product_img" />
+          <span>{{prod.product_title}}</span>
         </div>
         <div class="card-right" flex="dir:top">
-          <span>{{'1,000'}}</span>
-          <span>x{{'2'}}</span>
+          <span>{{prod.product_price}}</span>
+          <span>x{{prod.quantity}}</span>
         </div>
       </div>
       <!-- 待付款 -->
       <template v-if="status>1">
         <div class="order-msg tx-c-999" flex="main:justify">
           <span>订单总额：</span>
-          <span>¥2,300</span>
+          <span>¥{{data.total | rmb}}</span>
         </div>
         <div class="order-msg tx-c-999" flex="main:justify">
           <span>运费：</span>
-          <span>¥15</span>
+          <span>¥{{data.freight | rmb}}</span>
         </div>
         <div class="order-msg tx-c-333" flex="main:justify">
-          <span>返沉香果80个</span>
-          <span>80个</span>
+          <span>返沉香果</span>
+          <span>{{data.member_points}}个</span>
         </div>
       </template>
       <template v-else>
         <div class="order-msg tx-c-333" flex="main:justify">
           <span>订单总额：</span>
-          <span>¥2,300</span>
+          <span>¥{{data.total | rmb}}</span>
         </div>
         <div class="order-msg tx-c-333" flex="main:justify">
-          <span>返沉香果80个</span>
-          <span>80个</span>
+          <span>返沉香果</span>
+          <span>{{data.member_points}}个</span>
         </div>
         <div class="order-msg tx-c-333" flex="main:justify">
           <span>运费：</span>
-          <span>¥15</span>
+          <span>¥{{data.freight | rmb}}</span>
         </div>
       </template>
     </div>
@@ -82,19 +83,20 @@
       <div flex="cross:center"><i></i>订单信息</div>
       <!-- 待发货 -->
       <template v-if="status==2">
-        <p>订单编号:&nbsp;&nbsp;2019010110101021321</p>
-        <p>下单时间:&nbsp;&nbsp;2019-02-24 23:32:05</p>
+        <p>订单编号:&nbsp;&nbsp;{{data.order_no}}</p>
+        <p>下单时间:&nbsp;&nbsp;{{data.create_time | time}}</p>
       </template>
       <!-- 卖家已发货-->
       <template v-else-if="status==3">
-        <p>创建时间:&nbsp;&nbsp;2019-02-24 23:32:05</p>
-        <p>付款时间:&nbsp;&nbsp;2019-02-24 23:32:05</p>
-        <p>发货时间:&nbsp;&nbsp;2019-02-24 23:32:05</p>
+        <p>创建时间:&nbsp;&nbsp;{{data.create_time | time}}</p>
+        <p>付款时间:&nbsp;&nbsp;{{data.payment_time | time}}</p>
+        <p>发货时间:&nbsp;&nbsp;{{data.shipping_time | time}}</p>
       </template>
       <!-- 交易成功 -->
       <template v-else-if="status==4">
-        <p>创建时间:&nbsp;&nbsp;2019-02-24 23:32:05</p>
-        <p>下单时间:&nbsp;&nbsp;2019-02-24 23:32:05</p>
+        <p>创建时间:&nbsp;&nbsp;{{data.create_time | time}}</p>
+        <p>付款时间:&nbsp;&nbsp;{{data.payment_time | time}}</p>
+        <p>发货时间:&nbsp;&nbsp;{{data.shipping_time | time}}</p>
       </template>
     </div>
     <div class="paid-footer" flex="dir:right cross:center">
@@ -123,25 +125,43 @@
 </template>
 
 <script>
-  import { Toast } from 'vant'
+  import moment from 'moment'
 
   export default {
+    name: 'orderDetail',
     data () {
       return {
-        msg: "order detail",
         // status: 0 全部, 1 待支付， 2 待发货，3 待收货，4 已完成, 5 已取消
-        status: 1
+        status: 1,
+        goActive: '',
+        data: {}
       }
+    },
+    mounted () {
+      this.goActive = this.$route.query.active
+      this.$ajax
+        .get(`/order/details?order_id=${this.$route.query.id}`)
+        .then(({ data }) => {
+          this.status = parseInt(data.status)
+          this.data = data
+          console.log(data.create_time);
+          console.log(moment(1552132507*1000).startOf('hour').fromNow());
+        })
     },
     methods: {
       onClickLeft () {
-        this.$router.go(-1)
+        this.$router.push({
+          name: 'myOrders',
+          params: {
+            active: this.goActive
+          }
+        })
       },
       cancelOrder () {
-        Toast('quxiao dingdan')
+        this.$toast('quxiao dingdan')
       },
       paid () {
-        Toast('fukuan')
+        this.$toast('fukuan')
       }
     }
   }
@@ -185,12 +205,14 @@
       min-height: 60px;
       background-color: #fff;
 
-      img {
+      .addr-icon {
         margin-right: 12px;
         width: 27px;
         height: 27px;
-        border: 1px solid #ccc;
+        background: url('../assets/dizhi.png') no-repeat center center;
+        background-size: 28px 28px;
       }
+
       .addr-tx {
         color: #3C3A39;
         line-height: 17px;

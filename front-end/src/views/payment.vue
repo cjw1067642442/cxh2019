@@ -10,7 +10,7 @@
     <!-- 地址 -->
     <div class="paid-addr" flex="cross:center main:justify">
       <div flex="cross:center main:justify">
-        <img src="" alt="">
+        <span class="addr-icon"></span>
         <div class="addr-tx">
           <div>姚明</div>
           <div>广东省 深圳市 南山区 某某街道   某某小区10栋110号 </div>
@@ -115,12 +115,6 @@ export default {
   min-height: 60px;
   background-color: #fff;
 
-  img {
-    margin-right: 12px;
-    width: 27px;
-    height: 27px;
-    border: 1px solid #ccc;
-  }
   .addr-tx {
     color: #3C3A39;
     line-height: 17px;

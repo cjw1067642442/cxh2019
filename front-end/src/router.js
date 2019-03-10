@@ -47,6 +47,21 @@ export default new Router({
       path: '/product',
       name: 'product',
       component: () => import(/* webpackChunkName: "editaddress" */ './views/product.vue')
+    },
+    {
+      path: '/redeem',
+      name: 'redeem',
+      component: () => import(/* webpackChunkName: "redeem" */ './views/redeem.vue')
+    },
+    {
+      path: '/mymessage',
+      name: 'mymessage',
+      component: () => import(/* webpackChunkName: "mymessage" */ './views/myMessage.vue')
+    },
+    {
+      path: '/msgDetail',
+      name: 'msgDetail',
+      component: () => import(/* webpackChunkName: "msgDetail" */ './views/msgDetail.vue')
     }
   ]
 })
