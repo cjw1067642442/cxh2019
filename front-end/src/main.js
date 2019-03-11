@@ -13,7 +13,7 @@ import ajax from './plugins/ajax.js'
 Vue.config.productionTip = false
 Vue.use(Vant)
 Vue.use(ajax)
-Object.keys(filters).forEach(k => Vue.filter(k, filters[k]));
+Object.keys(filters).forEach(k => Vue.filter(k, filters[k]))
 
 new Vue({
   router,

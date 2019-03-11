@@ -62,6 +62,11 @@ export default new Router({
       path: '/msgDetail',
       name: 'msgDetail',
       component: () => import(/* webpackChunkName: "msgDetail" */ './views/msgDetail.vue')
+    },
+    {
+      path: '/payFor',
+      name: 'payFor',
+      component: () => import(/* webpackChunkName: "payFor" */ './views/payFor.vue')
     }
   ]
 })

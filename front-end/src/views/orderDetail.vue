@@ -11,7 +11,7 @@
       <div class="paid-time-tx">
         <template v-if="status==1">
           <div>等待买家付款</div>
-          <div>剩23小时59分自动关闭</div>
+          <div>剩 {{data.create_time | diffTime}} 自动关闭</div>
         </template>
         <template v-else-if="status==2">
           <div>您的包裹正整装待发</div>
@@ -19,7 +19,7 @@
         </template>
         <template v-else-if="status==3">
           <div>卖家已发货</div>
-          <div>还剩9天12小时自动确认</div>
+          <div>还剩{{data.create_time | diffTime}}自动确认</div>
         </template>
         <template v-else-if="status==4">
           <div>交易成功</div>
@@ -107,7 +107,7 @@
       </template>
       <!-- 待发货 -->
       <template v-else-if="status==2">
-        <van-button class="card-btn orange-btn van-hairline--surround" size="small" :round="true" @click.stop="paid">修改订单</van-button>
+        <van-button class="card-btn orange-btn van-hairline--surround" size="small" :round="true" @click.stop="fixedOrder">修改订单</van-button>
         <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop='cancelOrder'>申请退款</van-button>
       </template>
       <!-- 待收货 -->
@@ -134,7 +134,8 @@
         // status: 0 全部, 1 待支付， 2 待发货，3 待收货，4 已完成, 5 已取消
         status: 1,
         goActive: '',
-        data: {}
+        data: {},
+        cancelId: ''
       }
     },
     mounted () {
@@ -144,8 +145,6 @@
         .then(({ data }) => {
           this.status = parseInt(data.status)
           this.data = data
-          console.log(data.create_time);
-          console.log(moment(1552132507*1000).startOf('hour').fromNow());
         })
     },
     methods: {
@@ -158,10 +157,42 @@
         })
       },
       cancelOrder () {
-        this.$toast('quxiao dingdan')
+        this.cancelId = this.data.id
+        this.$ajax
+          .post('/order/cancel', {order_id: this.data.id})
+          .then(({status, data, msg}) => {
+            if (parseInt(status) === 1) {
+              this.$dialog.alert({
+                title: '成功',
+                message: '订单取消成功'
+              }).then(() => {
+                this.onClickLeft()
+              })
+            } else {
+              this.$dialog.alert({
+                title: '提示',
+                message: msg
+              })
+            }
+          })
+          .catch(err => {
+            this.$dialog.alert({
+              title: '失败',
+              message: '请稍后重试'
+            })
+          })
+      },
+      // 修改订单
+      fixedOrder () {
+
       },
       paid () {
-        this.$toast('fukuan')
+        this.$router.push({
+          name: 'payFor',
+          query: {
+            id: this.data.id
+          }
+        })
       }
     }
   }

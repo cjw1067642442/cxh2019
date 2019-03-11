@@ -25,15 +25,20 @@
 </template>
 
 <script>
-import { Toast } from 'vant'
 import { mapState } from 'vuex'
+import axios from 'axios'
+import qs from 'qs'
 
 export default {
   data () {
     return {
       searchResult: [],
-      addrSaving: false
+      addrSaving: false,
+      isNew: false
     }
+  },
+  mounted () {
+    if (this.$route.params.isNew) this.isNew = true
   },
   methods: {
     onClickLeft () {
@@ -43,17 +48,38 @@ export default {
     },
     // 修改 详细地址（街道地址） 时触发
     onChangeDetail (val) {
-      Toast(val)
+      // this.$toast(val)
     },
     // 切换是否使用默认地址时触发
     changeDefault (value) {
-      Toast(value+' 122')
+      this.$toast(value+' 122')
     },
+    // 确定修改
     onSave (content) {
-      Toast(JSON.stringify(content))
+      let data = {}
+      // 修改的时候，需要ID
+      if (!this.isNew) data.id = this.defaultInfo.id
+      data.region_id = content.areaCode
+      data.region = content.province + content.city + content.county
+      data.address = content.addressDetail
+      data.name = content.name
+      data.phone = content.tel
+      data.default = content.isDefault ? 1 : 0
+
+      let url = this.isNew ? '/address/add' : '/address/mod'
+
+      this.$ajax.post(url, data)
+        .then(({status, data, msg}) => {
+          if (parseInt(status) === 1) {
+            this.onClickLeft()
+          } else {
+            this.$toast(msg)
+          }
+        })
+
     },
     onDelete (content) {
-      Toast(JSON.stringify(content))
+      this.$toast(JSON.stringify(content))
     }
   },
   computed: {

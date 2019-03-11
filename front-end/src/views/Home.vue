@@ -6,7 +6,7 @@
     <van-button type="warning" to="/address">address</van-button>
     <van-button type="danger" to="/editaddress">editaddress</van-button> |
     <van-button type="danger" to="/address">address</van-button>
-    <van-button type="danger" to="/product">product</van-button> ->
+    <van-button type="danger" to="/product?id=1">product</van-button> ->
     <van-button type="danger" to="/redeem">redeem</van-button>
     <van-button type="danger" to="/mymessage">mymessage</van-button>
     <van-button type="danger" to="/msgDetail">msgDetail</van-button>

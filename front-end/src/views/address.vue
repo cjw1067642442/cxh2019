@@ -24,7 +24,7 @@
     </div>
 
     <div class="addr-footer">
-      <van-button class="add-addr-btn" to="/editaddress">添加地址</van-button>
+      <van-button class="add-addr-btn" @click="addAddr">添加地址</van-button>
     </div>
   </div>
 </template>
@@ -43,23 +43,30 @@ export default {
     if (this.$route.query.come) {
       this.comeFrom = this.$route.query.come
     }
+    this.$ajax.get('/address/index')
+      .then(({status, data, msg}) => {
+        if (parseInt(status) === 1) {
+          this.addrList = [...data]
+          console.log(data);
+        }
+      })
 
-    this.addrList = [{
-      address: "\u5357\u5c71\u533a\u67d0\u67d0\u8857\u90533\u53f7",
-      name: "\u59da\u660e",
-      phone: "18****678",
-      region: "\u5e7f\u4e1c\u7701\u9633\u6c5f\u5e02\u6c5f\u57ce\u533a",
-      region_id: "440000,441700,441702",
-      is_default: "1"
-    },
-    {
-      address: "\u6df1\u5733\u5e02\u5357\u5c71\u533a\u67d0\u67d0\u8857\u90531\u53f7",
-      name: "\u9648\u51a0\u5e0c66",
-      phone: "13****678 ",
-      region: "\u5e7f\u4e1c\u7701\u9633\u6c5f\u5e02\u6c5f\u57ce\u533a",
-      region_id: "440000,441700,441702 ",
-      is_default: "0"
-    }]
+    // this.addrList = [{
+    //   address: "\u5357\u5c71\u533a\u67d0\u67d0\u8857\u90533\u53f7",
+    //   name: "\u59da\u660e",
+    //   phone: "16620981788",
+    //   region: "\u5e7f\u4e1c\u7701\u9633\u6c5f\u5e02\u6c5f\u57ce\u533a",
+    //   region_id: "440000,441700,441702",
+    //   is_default: "1"
+    // },
+    // {
+    //   address: "\u6df1\u5733\u5e02\u5357\u5c71\u533a\u67d0\u67d0\u8857\u90531\u53f7",
+    //   name: "\u9648\u51a0\u5e0c66",
+    //   phone: "16620981788 ",
+    //   region: "\u5e7f\u4e1c\u7701\u9633\u6c5f\u5e02\u6c5f\u57ce\u533a",
+    //   region_id: "440000,441700,441702 ",
+    //   is_default: "0"
+    // }]
   },
   methods: {
     onClickLeft () {
@@ -92,7 +99,10 @@ export default {
     addAddr () {
       this.$store.commit('setDefaultInfo', {})
       this.$router.push({
-        path: '/editaddress',
+        name: 'editaddress',
+        params: {
+          isNew: true
+        }
       })
     }
   }

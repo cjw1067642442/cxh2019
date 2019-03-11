@@ -52,7 +52,7 @@
                   </div>
                   <div class="res-total tx-right">共{{compQua(card.details)}}件商品 合计: <strong>¥{{card.total}}</strong></div>
                   <div class="card-footer tx-right" v-if="card.status==1">
-                    <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop="fixAddr(card)">修改地址</van-button>
+                    <!-- <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop="fixAddr(card)">修改地址</van-button> -->
                     <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop="cancelOrder(card)">取消订单</van-button>
                     <van-button class="card-btn orange-btn van-hairline--surround" size="small" :round="true" @click.stop="paid(card)">付款</van-button>
                   </div>
@@ -96,7 +96,7 @@
                   </div>
                   <div class="res-total tx-right">共{{compQua(card.details)}}件商品 合计: <strong>¥{{card.total}}</strong></div>
                   <div class="card-footer tx-right">
-                    <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop="fixAddr(card)">修改地址</van-button>
+                    <!-- <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop="fixAddr(card)">修改地址</van-button> -->
                     <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop="cancelOrder(card)">取消订单</van-button>
                     <van-button class="card-btn orange-btn van-hairline--surround" to="/detail" size="small" :round="true" >付款</van-button>
                   </div>
@@ -283,9 +283,7 @@ export default {
     onLoad () {
       this.getListData()
     },
-    // 切换 状态
-    changeTab () {
-      this.page = 1
+    getType () {
       let type = ''
       switch (this.active) {
         case 1:
@@ -303,7 +301,12 @@ export default {
         default:
           type = 'completed'
       }
-
+      return type
+    },
+    // 切换 状态
+    changeTab () {
+      this.page = 1
+      let type = this.getType()
       this[type].list =  []
       // status: 0 全部, 1 待支付， 2 代发货，3 代收货，4 已完成, 5 已取消
       return this.getListData()
@@ -315,27 +318,8 @@ export default {
           this.page++
           this.loading = false
           if (data && data.length === 0) this.finished = true
-          console.log(data);
-          switch (this.active) {
-            case 1: {
-              this.toBePaid.list = [...this.toBePaid.list, ...data]
-              break;
-            }
-            case 2: {
-              this.toBeDelivered.list = [...this.toBeDelivered.list, ...data]
-              break;
-            }
-            case 3: {
-              this.pendingReceipt.list = [...this.pendingReceipt.list, ...data]
-              break;
-            }
-            case 4: {
-              this.completed.list = [...this.completed.list, ...data]
-              break;
-            }
-            default:
-              this.all.list = [...this.all.list, ...data]
-          }
+          let type = this.getType()
+          this[type].list = [...this[type].list, ...data]
         })
         .catch(err => {
           this.$toast(err + 'order/list')
@@ -350,33 +334,44 @@ export default {
       }
       return qua
     },
-    getImgs () {
-      this.$ajax.get('/order/list')
-        .then(res => {
-          console.log(res);
-        })
-    },
     // 付款
     paid (card) {
-      this.$toast('付款' + card.title)
+      this.$router.push({
+        name: 'payFor',
+        query: {
+          id: card.id
+        }
+      })
     },
     // 修改地址
     fixAddr (card) {
       this.$toast('修改地址' + card.title)
       this.$router.push({path: ''})
     },
+    deleteOrder () {
+
+    },
     // 取消订单
     cancelOrder (card) {
-      this.$toast('取消' + card.id)
-      // this.$ajax
-      //   .post('/order/cancel',{ order_id: card.id })
-      //   .then(res => {
-      //     console.log(res);
-      //   })
+      this.$ajax
+        .post('/order/cancel',{ order_id: card.id })
+        .then(({status, data, msg}) => {
+          if (parseInt(status) === 1) {
+            card.status = 5
+          }
+          this.$toast(msg)
+        })
     },
     // 确认收货
     getRes (card) {
       this.$toast('确认收货' + card.id)
+      this.$ajax.post('/order/completed', { order_id: card.id })
+        .then(({status, msg}) => {
+          if (parseInt(status) === 1) {
+
+          }
+          this.$toast(msg)
+        })
     },
     deletedOrder (card) {
       this.$dialog.confirm({

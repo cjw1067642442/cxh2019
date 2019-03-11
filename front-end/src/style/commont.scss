@@ -48,6 +48,19 @@ html,body {
   background:linear-gradient(90deg,#FF8955 0%,#D6454C 100%);
 }
 
+.hide-dom {
+  display: none;
+}
+.hide-inp {
+  display: inline-block;
+  width: 1px;
+  height: 0;
+  font-size: 10;
+  opacity: 0;
+  border: none;
+  background: transparent;
+}
+
 .tx-c-orange {
   color: #FF8955;
 }

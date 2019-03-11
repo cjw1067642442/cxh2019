@@ -10,8 +10,8 @@
     />
     <div class="prod-img">
       <van-swipe :autoplay="autoplay">
-        <van-swipe-item v-for="(img, i) in imgsList" :key="i">
-          <img src="img" alt="">
+        <van-swipe-item v-for="(img, i) in productMsg.thumb" :key="i">
+          <img :src="img" alt="">
         </van-swipe-item>
         <div slot="indicator"></div>
       </van-swipe>
@@ -23,14 +23,14 @@
     <div class="prod-dec marg-5-bottom" flex="cross:center">
       <span class="tx-c-999">说明:</span><span class="reword-icon">赠</span>&nbsp;&nbsp;<span class="tx-c-666">{{productMsg.member_points}}个沉香果</span>
     </div>
-    <div class="prod-dec marg-5-bottom" flex="cross:center">
+    <!-- <div class="prod-dec marg-5-bottom" flex="cross:center">
       <span class="tx-c-999">邮费:</span>&nbsp;&nbsp;<span class="tx-c-666">15元</span>
-    </div>
+    </div> -->
     <div class="prod-nav">
       <van-tabs v-model="prodAct" :animated="true" :swipeable="true" :sticky="true">
         <van-tab title="图文详情">
           <div class="pic-detail" flex="dir:top">
-            <img v-for="img in decPicList" :src="img" alt="">
+            <img v-for="img in productMsg.details" :src="img" />
           </div>
         </van-tab>
         <van-tab title="购买须知" v-html="purchaseNotes" class="purchase-notes"></van-tab>
@@ -53,19 +53,23 @@
       <div class="select-win" v-show="buyNow">
         <span class="close-icon" @click.stop="buyNow = false">X</span>
         <div class="img-out-bg" flex="main:center cross:center">
-          <img src="" alt="">
+          <img :src="productMsg.thumb[0]" alt="">
         </div>
         <div class="title-part">
-          <div class="title-price"><strong class="tx-c-red">￥700</strong></div>
+          <div class="title-price"><strong class="tx-c-red">￥{{selectPrice ? selectPrice : productMsg.price}}</strong></div>
           <div class="condition-btn tx-c-333" flex="">
             <span>选择</span>
-            <span>尺寸</span>
-            <span>颜色分类</span>
+            <span v-for="spec in productMsg.spec">{{spec.name}}</span>
           </div>
         </div>
         <!-- 选择条件 -->
         <div class="condition-content">
-          这里是条件
+          <div class="cond-spec" v-for="(spec, spIdx) in productMsg.spec">
+            <p>{{spec.name}}</p>
+            <div flex="">
+              <span v-for="(v, idx) in spec.value" :class="{'sel-spec': v.selected}" @click.stop.prevent="selSpec(spIdx,idx,spec.value,v)">{{v.key}}</span>
+            </div>
+          </div>
         </div>
         <div class="sure-btn">
           <van-button type="button" @click="goToPay">确认</van-button>
@@ -76,39 +80,93 @@
 </template>
 
 <script>
-
 export default {
   data () {
     return {
-      img: '',
       autoplay: 0,
-      imgsList: ['/jjs.png'],
+      id: '',
       // 购买须知
-      purchaseNotes: '<p>这里是购买须知</p><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>这里是购买须知</p><p>这里是购买须知</p><p>这里是购买须知</p>',
+      purchaseNotes: '',
       prodAct: '',
-      decPicList: [],
       buyNow: false,
       productMsg: {
-        id:'2',
-        cate_id:'3',
-        title:'\u4ea7\u54c12',
-        thumb:'',
-        details:'',
-        price:'23.00',
-        price2:'0.0 0',
-        member_points:'10',
-        create_time:'0',
-        update_time:'0',
-        sort:'0',
-        stock:'100',
-        status:'1'
-      }
+        id: '',
+        cate_id:'',
+        title: '',
+        thumb: [],
+        details: [],
+        price: '',
+        price2: '',
+        member_points: '',
+        create_time: '',
+        update_time: '',
+        sort: '',
+        stock: '',
+        status: '',
+        spec: [],
+        spec_price: {}
+      },
+      selectPrice: '',
+      selMark: [],
+      spec_length: 0
     }
+  },
+  mounted () {
+    this.$ajax
+      .get('/product/details?id=' + this.$route.query.id)
+      .then(({status, data, msg}) => {
+        if (parseInt(status) === 1) {
+          (this.productMsg = this.addSpecMark(data))
+        } else {
+          this.$toast.fail(msg)
+        }
+      })
+      .catch(err => {
+        this.$toast.fail(JSON.stringify(err))
+      })
   },
   methods: {
     onClickLeft () {
       // 返回列表页
       this.$router.push('/myOrders')
+    },
+    addSpecMark (data) {
+      // 设置 默认 选择规格
+      // let once = 0
+      // for (let key in data.spec_price) {
+      //   if (once>0) break
+      //   this.selMark = key.split("_")
+      // }
+
+      // 设置规格 类别数量
+      this.spec_length = data.spec.length
+      // 给 规格添加标记
+      if (data && data.spec.length > 0) {
+        //
+        data.spec.forEach(item => {
+          item.value.forEach(key => {
+            key.selected = false
+          })
+        })
+      }
+      return data
+    },
+    selSpec (idx, key, values, item) {
+      this.selMark[idx] = key+1
+      if (this.selMark.length === this.spec_length && this.productMsg.spec_price[this.selMark.join('_')]) {
+        this.selectPrice = this.productMsg.spec_price[this.selMark.join('_')].price
+        // this.$toast(this.productMsg.spec_price[this.selMark.join('_')].price)
+      }
+
+      //
+      // if (this.selMark.length === this.spec_length && !this.productMsg.spec_price[this.selMark.join('_')]) {
+      //   return this.$toast('暂无此规格')
+      // }
+      values.forEach(item => (item.selected = false))
+      item.selected = true
+    },
+    mapPrice () {
+
     },
     goToPay () {
 
@@ -134,8 +192,9 @@ export default {
 
     img {
       display: block;
+      width: 100%;
       height: 100%;
-      background-color: #ff3760;
+      background-color: #6D5F56;
     }
   }
   .marg-5-bottom {
@@ -261,14 +320,13 @@ export default {
       top: -43px;
       width: 100px;
       height: 100px;
-      background: green;
+      background: #FFF;
       border-radius: 5px;
     }
 
     img {
       width: 77px;
       height: 81px;
-      border: 1px solid #ccc;
     }
 
     .sure-btn {
@@ -286,6 +344,33 @@ export default {
         font-size: 16px;
         text-align: center;
         border: none;
+        background-color: #D6454C;
+      }
+    }
+  }
+
+  .condition-content {
+    padding: 0 16px;
+
+    .cond-spec {
+
+      p {
+        color: #333;
+        line-height: 20px;
+      }
+
+      span {
+        box-sizing: border-box;
+        margin-right: 12px;
+        display: inline-block;
+        padding: 3px 9px;
+        font-size: 10px;
+        color: #999;
+        border-radius: 2px;
+        background-color: #F2F2F3;
+      }
+      .sel-spec {
+        color: #FFF;
         background-color: #D6454C;
       }
     }
