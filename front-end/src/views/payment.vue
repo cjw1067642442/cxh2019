@@ -12,8 +12,8 @@
       <div flex="cross:center main:justify">
         <span class="addr-icon"></span>
         <div class="addr-tx">
-          <div>姚明</div>
-          <div>广东省 深圳市 南山区 某某街道   某某小区10栋110号 </div>
+          <div>{{selAddrMsg.name}}</div>
+          <div>{{selAddrMsg.region + selAddrMsg.address}}</div>
         </div>
       </div>
       <span class="arr-right" @click="selAddr"><i class="van-icon van-icon-arrow-left van-nav-bar__arrow"></i></span>
@@ -41,32 +41,67 @@
 </template>
 
 <script>
-import { Toast } from 'vant'
+import qs from 'qs'
 import { mapState } from 'vuex'
 
 export default {
   name: 'payment',
   data () {
     return {
-      defaultAddr: {
+      selAddrMsg: {
         address: '',
+        id: '',
+        is_default: '',
         name: '',
         phone: '',
         region: '',
-        region_id: '',
-        is_default: ''
+        region_id: ''
       }
     }
   },
   mounted () {
-    this.defaultAddr = this.$router.params
+    console.log(this.$route.params);
+    if (this.$route.params.name) {
+      (this.selAddrMsg = this.$route.params)
+    } else {
+      // 获取下单地址
+      this.$ajax.get('/address/index')
+      .then(({status, data, msg}) => {
+        if (parseInt(status) === 1) {
+          this.selAddrMsg = data[0]
+        }
+      })
+    }
   },
   methods: {
     onClickLeft () {
       this.$router.go(-1)
     },
     payforMoney () {
-      Toast(JSON.stringify(this.$store.state.selectedList))
+      let data = {
+        products: this.selectedList, // qs.stringify(this.selectedList, { arrayFormat: 'brackets' }),
+        consignee: this.selAddrMsg.name,
+        consignee_phone: this.selAddrMsg.phone,
+        shipping_address: this.selAddrMsg.region + ' ' + this.selAddrMsg.address,
+      }
+
+      this.$ajax.post('/order/create', data)
+      .then(({status, data, msg}) => {
+        let succMsg = msg
+        if (parseInt(status) === 1) {
+          this.$router.push({
+            name: 'payFor',
+            query: {
+              id: data.order_id,
+            }
+          })
+          succMsg = '提交成功'
+        }
+        this.$toast(succMsg)
+      })
+      .catch(err => {
+        this.$toast(JSON.stringify(err))
+      })
     },
     selAddr () {
       this.$router.push({ path: '/address', query: { come: 'payment' } })
@@ -144,7 +179,6 @@ export default {
         margin-right: 13px;
         width: 86px;
         height: 90px;
-        border: 1px solid #ccc;
       }
       &>div>div {
         &:first-child {

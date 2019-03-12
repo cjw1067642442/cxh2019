@@ -22,6 +22,10 @@ export default new Vuex.Store({
     // 修改地址  默认 值
     setDefaultInfo (state, info) {
       state.defaultInfo = info
+    },
+    // 立即下单
+    orderNow(state, orderMsg) {
+      state.selectedList = [orderMsg]
     }
   },
   actions: {

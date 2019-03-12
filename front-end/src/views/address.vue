@@ -47,7 +47,6 @@ export default {
       .then(({status, data, msg}) => {
         if (parseInt(status) === 1) {
           this.addrList = [...data]
-          console.log(data);
         }
       })
 
@@ -77,7 +76,7 @@ export default {
       if (this.comeFrom) {
         this.$router.push({
           name: this.comeFrom,
-          params: addr
+          params: Object.assign({}, addr),
         })
       }
     },

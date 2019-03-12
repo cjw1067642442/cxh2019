@@ -36,7 +36,7 @@
                     <span v-else-if="card.status==2" class="not-completed-status">待发货</span>
                     <span v-else-if="card.status==3" class="not-completed-status">待收货</span>
                     <span v-else-if="card.status==4" class="completed-status">交易成功</span>
-                    <span v-else class="completed-status">已取消</span>
+                    <span v-else class="tx-c-999">已取消</span>
                   </div>
                   <div class="card-content">
                     <div flex="main:justify" class="card-res-box" v-for="prod in card.details">
@@ -97,7 +97,7 @@
                   <div class="res-total tx-right">共{{compQua(card.details)}}件商品 合计: <strong>¥{{card.total}}</strong></div>
                   <div class="card-footer tx-right">
                     <!-- <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop="fixAddr(card)">修改地址</van-button> -->
-                    <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop="cancelOrder(card)">取消订单</van-button>
+                    <van-button class="card-btn van-hairline--surround" size="small" :disabled="cancelingOrder" :round="true" @click.stop="cancelOrder(card)">取消订单</van-button>
                     <van-button class="card-btn orange-btn van-hairline--surround" to="/detail" size="small" :round="true" >付款</van-button>
                   </div>
                 </van-cell>
@@ -187,7 +187,8 @@
         <van-tab class="my-van-tab" :title="completed.title">
           <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
             <template v-if="completed.list.length>0">
-              <v-model="loading"
+              <van-list
+                v-model="loading"
                 :finished="finished"
                 finished-text="没有更多了"
                 @load="onLoad"
@@ -211,7 +212,7 @@
                   </div>
                   <div class="res-total tx-right">共{{compQua(card.details)}}件商品 合计: <strong>¥{{card.total}}</strong></div>
                   <div class="card-footer tx-right">
-                    <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop="deletedOrder(card)">删除订单</van-button>
+                    <!-- <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop="deletedOrder(card)">删除订单</van-button> -->
                   </div>
                 </van-cell>
               </van-list>
@@ -235,6 +236,7 @@ export default {
       loading: false,
       page: 1,
       finished: false,
+      cancelingOrder: false,
       all: {
         title: '全部',
         list: []
@@ -263,10 +265,9 @@ export default {
     this.$ajax.post('/order/list', { status: this.active })
       .then(res => {
         this.all.list = [...res.data]
-        console.log(res)
       })
       .catch(err => {
-        console.log(err)
+        this.$toast(JSON.stringify(err))
       })
   },
   methods: {
@@ -274,6 +275,7 @@ export default {
       this.$router.go(-1)
     },
     onRefresh () {
+      this.loadloading = true
       this.changeTab(this.active)
       .then(() => {
         this.$toast('刷新成功')
@@ -305,9 +307,10 @@ export default {
     },
     // 切换 状态
     changeTab () {
+      this.loadloading = true
       this.page = 1
       let type = this.getType()
-      this[type].list =  []
+      this[type].list = []
       // status: 0 全部, 1 待支付， 2 代发货，3 代收货，4 已完成, 5 已取消
       return this.getListData()
     },
@@ -317,7 +320,11 @@ export default {
           let { data } = res
           this.page++
           this.loading = false
-          if (data && data.length === 0) this.finished = true
+          if (data && data.length === 0) {
+            setTimeout(() => {
+              this.finished = true
+            })
+          }
           let type = this.getType()
           this[type].list = [...this[type].list, ...data]
         })
@@ -353,13 +360,18 @@ export default {
     },
     // 取消订单
     cancelOrder (card) {
+      this.cancelingOrder = true
       this.$ajax
         .post('/order/cancel',{ order_id: card.id })
         .then(({status, data, msg}) => {
+          this.cancelingOrder = false
           if (parseInt(status) === 1) {
             card.status = 5
+            this.$toast('订单取消成功')
           }
-          this.$toast(msg)
+        })
+        .catch(() => {
+          this.cancelingOrder = false
         })
     },
     // 确认收货
@@ -378,6 +390,7 @@ export default {
         title: '确认删除订单',
         message: '删除之后无法再查看次订单'
       }).then(() => {
+
         this.$toast('删除订单' + card.id)
       }).catch(() => {
         // on cancel

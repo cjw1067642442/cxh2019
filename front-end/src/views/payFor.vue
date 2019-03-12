@@ -9,7 +9,7 @@
     />
     <div class="money-msg" flex="main:center cross:center dir:top">
       <p class="tx-c-333">订单总额</p>
-      <div><strong class="tx-c-red">￥{{'2300' | rmb}}</strong></div>
+      <div><strong class="tx-c-red">￥{{total | rmb}}</strong></div>
       <div>待付款</div>
     </div>
     <div class="pay-msg" flex="dir:top">
@@ -46,7 +46,8 @@ export default {
       name: '',
       bank: '',
       card_no: '',
-      payment_no: ''
+      payment_no: '',
+      total: 0
     }
   },
   mounted () {
@@ -57,6 +58,7 @@ export default {
           this.bank = data.bank
           this.card_no = data.card_no
           this.payment_no = data.payment_no
+          this.total = data.total
         }
         else {
           this.$toast(msg)
@@ -68,7 +70,9 @@ export default {
   },
   methods: {
     onClickLeft () {
-      this.$router.go(-1)
+      this.$router.push({
+        path: '/myOrders'
+      })
     },
     copyAccount () {
       this.$refs.account.select()

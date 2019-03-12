@@ -42,7 +42,7 @@
         <router-link class="shop-cart-btn" to="/shoppingcart"></router-link>
       </van-col>
       <van-col span="10">
-        <van-button class="cart-btn">加入购物车</van-button>
+        <van-button class="cart-btn" @click.stop="addCard">加入购物车</van-button>
       </van-col>
       <van-col span="10">
         <van-button class="buy-btn" @click="buyNow = true">立即购买</van-button>
@@ -69,6 +69,10 @@
             <div flex="">
               <span v-for="(v, idx) in spec.value" :class="{'sel-spec': v.selected}" @click.stop.prevent="selSpec(spIdx,idx,spec.value,v)">{{v.key}}</span>
             </div>
+          </div>
+          <div class="cond-spec">
+            <p>数量</p>
+            <van-stepper v-model="selNum" />
           </div>
         </div>
         <div class="sure-btn">
@@ -108,6 +112,7 @@ export default {
       },
       selectPrice: '',
       selMark: [],
+      selNum: 1,
       spec_length: 0
     }
   },
@@ -151,10 +156,20 @@ export default {
       }
       return data
     },
+    // 选择规格
     selSpec (idx, key, values, item) {
-      this.selMark[idx] = key+1
-      if (this.selMark.length === this.spec_length && this.productMsg.spec_price[this.selMark.join('_')]) {
-        this.selectPrice = this.productMsg.spec_price[this.selMark.join('_')].price
+      this.selMark[idx] = key + 1
+      if (this.selMark.length === this.spec_length) {
+        if (this.productMsg.spec_price[this.selMark.join('_')]) {
+          this.selectPrice = this.productMsg.spec_price[this.selMark.join('_')].price
+        } else if (!this.selMark.join('_').match('__')) {
+          this.selectPrice = '---'
+          item.selected = false
+          this.$toast('暂时没有这个规格可选')
+          setTimeout(() => {
+            item.selected = false
+          }, 1000)
+        }
         // this.$toast(this.productMsg.spec_price[this.selMark.join('_')].price)
       }
 
@@ -162,14 +177,44 @@ export default {
       // if (this.selMark.length === this.spec_length && !this.productMsg.spec_price[this.selMark.join('_')]) {
       //   return this.$toast('暂无此规格')
       // }
+      //
+      let oldVal = item.selected
       values.forEach(item => (item.selected = false))
-      item.selected = true
+      item.selected = !oldVal
     },
-    mapPrice () {
-
+    // 加入购物车
+    addCard () {
+      this.$ajax.post('/cart/mod', {
+        product_id: this.productMsg.id,
+        quantity: this.selNum,
+        product_spec_id: this.productMsg.spec_price[this.selMark.join('_')].id
+      })
+      .then(({status, data, msg}) => {
+          if (parseInt(status) === 1) {
+            this.buyNow = false
+          }
+          this.$toast(msg)
+      })
+      .catch(err => {
+        this.$toast(JSON.stringify(msg))
+      })
     },
+    // 立即购买
     goToPay () {
-
+      let orderMsg = {
+        product_id: this.productMsg.id,
+        product_title: this.productMsg.title,
+        product_price: this.selectPrice,
+        quantity: this.selNum,
+        product_spec_id: this.productMsg.spec_price[this.selMark.join('_')].id,
+        product_img: this.productMsg.thumb[0]
+      }
+      // 计算总价
+      this.$store.commit('changeAllMoney', orderMsg.product_price * orderMsg.quantity)
+      this.$store.commit('orderNow', orderMsg)
+      this.$router.push({
+        path: '/payment',
+      })
     }
   }
 }
@@ -285,7 +330,7 @@ export default {
     bottom: 0;
     z-index: 100;
     padding: 0 16px;
-    height: 300px;
+    min-height: 350px;
     background: #FFF;
     box-shadow: 0 0 20px 0px #ccc;
 
@@ -303,6 +348,7 @@ export default {
 
     .condition-content {
       margin: 10px 0 0 0;
+      padding: 0 0 20px 0;
     }
 
     .close-icon {
