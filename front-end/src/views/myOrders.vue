@@ -18,100 +18,89 @@
         color="#D6454C"
         title-inactive-color="#3C3A39"
         title-active-color="#D6454C"
-        :animated="true">
+        :animated="false">
         <!-- 全部 -->
         <van-tab class="my-van-tab" :title="all.title">
           <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
-            <template v-if="all.list.length>0">
-              <van-list
-                v-model="loading"
-                :finished="finished"
-                finished-text="没有更多了"
-                @load="onLoad"
-                >
-                <van-cell class="my-card" v-for="card in all.list" :key="card.id" @click.stop.prevent="checkOrderDetail(card)">
-                  <div class="card-title" flex="main:justify">
-                    <span class="card-oid">订单编号:{{card.id}}</span>
-                    <span v-if="card.status==1" class="not-completed-status">待支付</span>
-                    <span v-else-if="card.status==2" class="not-completed-status">待发货</span>
-                    <span v-else-if="card.status==3" class="not-completed-status">待收货</span>
-                    <span v-else-if="card.status==4" class="completed-status">交易成功</span>
-                    <span v-else class="tx-c-999">已取消</span>
-                  </div>
-                  <div class="card-content">
-                    <div flex="main:justify" class="card-res-box" v-for="prod in card.details">
-                      <div class="card-left" flex="dir:left">
-                        <img :src="prod.product_img" />
-                        <span>{{prod.product_title}}</span>
-                      </div>
-                      <div class="card-right" flex="dir:top">
-                        <span>{{prod.product_price}}</span>
-                        <span>x{{prod.quantity}}</span>
-                      </div>
+            <van-list
+              v-model="loading"
+              :finished="finished"
+              finished-text="没有更多了"
+              @load="onLoad"
+              >
+              <van-cell class="my-card" v-for="card in all.list" :key="card.id" @click.stop.prevent="checkOrderDetail(card)">
+                <div class="card-title" flex="main:justify">
+                  <span class="card-oid">订单编号:{{card.id}}</span>
+                  <span v-if="card.status==1" class="not-completed-status">待支付</span>
+                  <span v-else-if="card.status==2" class="not-completed-status">待发货</span>
+                  <span v-else-if="card.status==3" class="not-completed-status">待收货</span>
+                  <span v-else-if="card.status==4" class="completed-status">交易成功</span>
+                  <span v-else class="tx-c-999">已取消</span>
+                </div>
+                <div class="card-content">
+                  <div flex="main:justify" class="card-res-box" v-for="prod in card.details">
+                    <div class="card-left" flex="dir:left">
+                      <img :src="prod.product_img" />
+                      <span>{{prod.product_title}}</span>
+                    </div>
+                    <div class="card-right" flex="dir:top">
+                      <span>{{prod.product_price}}</span>
+                      <span>x{{prod.quantity}}</span>
                     </div>
                   </div>
-                  <div class="res-total tx-right">共{{compQua(card.details)}}件商品 合计: <strong>¥{{card.total}}</strong></div>
-                  <div class="card-footer tx-right" v-if="card.status==1">
-                    <!-- <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop="fixAddr(card)">修改地址</van-button> -->
-                    <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop="cancelOrder(card)">取消订单</van-button>
-                    <van-button class="card-btn orange-btn van-hairline--surround" size="small" :round="true" @click.stop="paid(card)">付款</van-button>
-                  </div>
-                  <div class="card-footer" flex="dir:right" v-else-if="card.status==3">
-                    <van-button class="card-btn orange-btn van-hairline--surround" size="small" :round="true" @click.stop="fixAddr(card)">确认收货</van-button>
-                  </div>
-                </van-cell>
-              </van-list>
-            </template>
-            <template v-else>
-              <div class="no-data tx-c-666">暂无数据</div>
-            </template>
+                </div>
+                <div class="res-total tx-right">共{{compQua(card.details)}}件商品 合计: <strong>¥{{card.total}}</strong></div>
+                <div class="card-footer tx-right" v-if="card.status==1">
+                  <!-- <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop="fixAddr(card)">修改地址</van-button> -->
+                  <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop="cancelOrder(card)">取消订单</van-button>
+                  <van-button class="card-btn orange-btn van-hairline--surround" size="small" :round="true" @click.stop="paid(card)">付款</van-button>
+                </div>
+                <div class="card-footer" flex="dir:right" v-else-if="card.status==3">
+                  <van-button class="card-btn orange-btn van-hairline--surround" size="small" :round="true" @click.stop="fixAddr(card)">确认收货</van-button>
+                </div>
+              </van-cell>
+            </van-list>
           </van-pull-refresh>
         </van-tab>
         <!-- 待支付 -->
         <van-tab class="my-van-tab" :title="toBePaid.title">
           <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
-            <template v-if="toBePaid.list.length>0">
-              <van-list
-                v-model="loading"
-                :finished="finished"
-                finished-text="没有更多了"
-                @load="onLoad"
-                >
-                <van-cell class="my-card" v-for="card in toBePaid.list" :key="card.id" @click.stop.prevent="checkOrderDetail(card)">
-                  <div class="card-title" flex="main:justify">
-                    <span class="card-oid">订单编号:{{card.id}}</span>
-                    <span class="not-completed-status">待支付</span>
-                  </div>
-                  <div class="card-content">
-                    <div flex="main:justify" class="card-res-box" v-for="prod in card.details">
-                      <div class="card-left" flex="dir:left">
-                        <img :src="prod.product_img" />
-                        <span>{{prod.product_title}}</span>
-                      </div>
-                      <div class="card-right" flex="dir:top">
-                        <span>{{prod.product_price}}</span>
-                        <span>x{{prod.quantity}}</span>
-                      </div>
+            <van-list
+              v-model="loading"
+              :finished="finished"
+              finished-text="没有更多了"
+              @load="onLoad"
+              >
+              <van-cell class="my-card" v-for="card in toBePaid.list" :key="card.id" @click.stop.prevent="checkOrderDetail(card)">
+                <div class="card-title" flex="main:justify">
+                  <span class="card-oid">订单编号:{{card.id}}</span>
+                  <span class="not-completed-status">待支付</span>
+                </div>
+                <div class="card-content">
+                  <div flex="main:justify" class="card-res-box" v-for="prod in card.details">
+                    <div class="card-left" flex="dir:left">
+                      <img :src="prod.product_img" />
+                      <span>{{prod.product_title}}</span>
+                    </div>
+                    <div class="card-right" flex="dir:top">
+                      <span>{{prod.product_price}}</span>
+                      <span>x{{prod.quantity}}</span>
                     </div>
                   </div>
-                  <div class="res-total tx-right">共{{compQua(card.details)}}件商品 合计: <strong>¥{{card.total}}</strong></div>
-                  <div class="card-footer tx-right">
-                    <!-- <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop="fixAddr(card)">修改地址</van-button> -->
-                    <van-button class="card-btn van-hairline--surround" size="small" :disabled="cancelingOrder" :round="true" @click.stop="cancelOrder(card)">取消订单</van-button>
-                    <van-button class="card-btn orange-btn van-hairline--surround" to="/detail" size="small" :round="true" >付款</van-button>
-                  </div>
-                </van-cell>
-              </van-list>
-            </template>
-            <template v-else>
-              <div class="no-data tx-c-666">暂无数据</div>
-            </template>
+                </div>
+                <div class="res-total tx-right">共{{compQua(card.details)}}件商品 合计: <strong>¥{{card.total}}</strong></div>
+                <div class="card-footer tx-right">
+                  <!-- <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop="fixAddr(card)">修改地址</van-button> -->
+                  <van-button class="card-btn van-hairline--surround" size="small" :disabled="cancelingOrder" :round="true" @click.stop="cancelOrder(card)">取消订单</van-button>
+                  <van-button class="card-btn orange-btn van-hairline--surround" to="/detail" size="small" :round="true" >付款</van-button>
+                </div>
+              </van-cell>
+            </van-list>
           </van-pull-refresh>
         </van-tab>
         <!-- 待发货 -->
         <van-tab class="my-van-tab" :title="toBeDelivered.title">
           <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
-            <template v-if="toBeDelivered.list.length>0">
               <van-list
                 v-model="loading"
                 :finished="finished"
@@ -138,88 +127,74 @@
                   <div class="res-total tx-right">共{{compQua(card.details)}}件商品 合计: <strong>¥{{card.total}}</strong></div>
                 </van-cell>
               </van-list>
-            </template>
-            <template v-else>
-              <div class="no-data tx-c-666">暂无数据</div>
-            </template>
           </van-pull-refresh>
         </van-tab>
         <!-- 待收货 -->
         <van-tab class="my-van-tab" :title="pendingReceipt.title">
           <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
-            <template v-if="pendingReceipt.list.length>0">
-              <van-list
-                v-model="loading"
-                :finished="finished"
-                finished-text="没有更多了"
-                @load="onLoad"
-                >
-                <van-cell class="my-card" v-for="card in pendingReceipt.list" :key="card.id" @click.stop.prevent="checkOrderDetail(card)">
-                  <div class="card-title" flex="main:justify">
-                    <span class="card-oid">订单编号:{{card.id}}</span>
-                    <span class="not-completed-status">待收货</span>
-                  </div>
-                  <div class="card-content">
-                    <div flex="main:justify" class="card-res-box" v-for="prod in card.details">
-                      <div class="card-left" flex="dir:left">
-                        <img :src="prod.product_img" />
-                        <span>{{prod.product_title}}</span>
-                      </div>
-                      <div class="card-right" flex="dir:top">
-                        <span>{{prod.product_price}}</span>
-                        <span>x{{prod.quantity}}</span>
-                      </div>
+            <van-list
+              v-model="loading"
+              :finished="finished"
+              finished-text="没有更多了"
+              @load="onLoad"
+              >
+              <van-cell class="my-card" v-for="card in pendingReceipt.list" :key="card.id" @click.stop.prevent="checkOrderDetail(card)">
+                <div class="card-title" flex="main:justify">
+                  <span class="card-oid">订单编号:{{card.id}}</span>
+                  <span class="not-completed-status">待收货</span>
+                </div>
+                <div class="card-content">
+                  <div flex="main:justify" class="card-res-box" v-for="prod in card.details">
+                    <div class="card-left" flex="dir:left">
+                      <img :src="prod.product_img" />
+                      <span>{{prod.product_title}}</span>
+                    </div>
+                    <div class="card-right" flex="dir:top">
+                      <span>{{prod.product_price}}</span>
+                      <span>x{{prod.quantity}}</span>
                     </div>
                   </div>
-                  <div class="res-total tx-right">共{{compQua(card.details)}}件商品 合计: <strong>¥{{card.total}}</strong></div>
-                  <div class="card-footer tx-right">
-                    <van-button class="card-btn orange-btn van-hairline--surround" size="small" :round="true" @click.stop="getRes(card)">确认收货</van-button>
-                  </div>
-                </van-cell>
-              </van-list>
-            </template>
-            <template v-else>
-              <div class="no-data tx-c-666">暂无数据</div>
-            </template>
+                </div>
+                <div class="res-total tx-right">共{{compQua(card.details)}}件商品 合计: <strong>¥{{card.total}}</strong></div>
+                <div class="card-footer tx-right">
+                  <van-button class="card-btn orange-btn van-hairline--surround" size="small" :round="true" @click.stop="getRes(card)">确认收货</van-button>
+                </div>
+              </van-cell>
+            </van-list>
           </van-pull-refresh>
         </van-tab>
         <!-- 已完成 -->
         <van-tab class="my-van-tab" :title="completed.title">
           <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
-            <template v-if="completed.list.length>0">
-              <van-list
-                v-model="loading"
-                :finished="finished"
-                finished-text="没有更多了"
-                @load="onLoad"
-                >
-                <van-cell class="my-card" v-for="card in completed.list" :key="card.id" @click.stop.prevent="checkOrderDetail(card)">
-                  <div class="card-title" flex="main:justify">
-                    <span class="card-oid">订单编号:{{card.id}}</span>
-                    <span class="completed-status">交易成功</span>
-                  </div>
-                  <div class="card-content">
-                    <div flex="main:justify" class="card-res-box" v-for="prod in card.details">
-                      <div class="card-left" flex="dir:left">
-                        <img :src="prod.product_img" />
-                        <span>{{prod.product_title}}</span>
-                      </div>
-                      <div class="card-right" flex="dir:top">
-                        <span>{{prod.product_price}}</span>
-                        <span>x{{prod.quantity}}</span>
-                      </div>
+            <van-list
+              v-model="loading"
+              :finished="finished"
+              finished-text="没有更多了"
+              @load="onLoad"
+              >
+              <van-cell class="my-card" v-for="card in completed.list" :key="card.id" @click.stop.prevent="checkOrderDetail(card)">
+                <div class="card-title" flex="main:justify">
+                  <span class="card-oid">订单编号:{{card.id}}</span>
+                  <span class="completed-status">交易成功</span>
+                </div>
+                <div class="card-content">
+                  <div flex="main:justify" class="card-res-box" v-for="prod in card.details">
+                    <div class="card-left" flex="dir:left">
+                      <img :src="prod.product_img" />
+                      <span>{{prod.product_title}}</span>
+                    </div>
+                    <div class="card-right" flex="dir:top">
+                      <span>{{prod.product_price}}</span>
+                      <span>x{{prod.quantity}}</span>
                     </div>
                   </div>
-                  <div class="res-total tx-right">共{{compQua(card.details)}}件商品 合计: <strong>¥{{card.total}}</strong></div>
-                  <div class="card-footer tx-right">
-                    <!-- <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop="deletedOrder(card)">删除订单</van-button> -->
-                  </div>
-                </van-cell>
-              </van-list>
-            </template>
-            <template v-else>
-              <div class="no-data tx-c-666">暂无数据</div>
-            </template>
+                </div>
+                <div class="res-total tx-right">共{{compQua(card.details)}}件商品 合计: <strong>¥{{card.total}}</strong></div>
+                <div class="card-footer tx-right">
+                  <!-- <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop="deletedOrder(card)">删除订单</van-button> -->
+                </div>
+              </van-cell>
+            </van-list>
           </van-pull-refresh>
         </van-tab>
       </van-tabs>
@@ -275,7 +250,6 @@ export default {
       this.$router.go(-1)
     },
     onRefresh () {
-      this.loadloading = true
       this.changeTab(this.active)
       .then(() => {
         this.$toast('刷新成功')
@@ -308,6 +282,7 @@ export default {
     // 切换 状态
     changeTab () {
       this.loadloading = true
+      this.finished = false
       this.page = 1
       let type = this.getType()
       this[type].list = []
