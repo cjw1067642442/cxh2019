@@ -12,8 +12,6 @@ export default {
     // 请求拦截器
     Vue.prototype.$ajax.interceptors.request.use(
       function (config) {
-        config.headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
-        config.headers['token'] = '946e84f86519t7d9ca47910d129168d2'
         // 对请求参数做点什么
         if (config && config.data) {
           let data = Object.assign({}, config.data)

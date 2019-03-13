@@ -1,17 +1,24 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
+// import Home from './views/Home.vue'
+import myOrders from './views/myOrders.vue'
+import loginTips from './views/loginTips.vue'
 
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
+  mode: 'history', // hash
   base: process.env.BASE_URL,
   routes: [
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: myOrders
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: loginTips
     },
     {
       path: '/myOrders',

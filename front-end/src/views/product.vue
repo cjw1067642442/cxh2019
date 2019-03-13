@@ -45,7 +45,7 @@
         <van-button class="cart-btn" @click.stop="addCard">加入购物车</van-button>
       </van-col>
       <van-col span="10">
-        <van-button class="buy-btn" @click="buyNow = true">立即购买</van-button>
+        <van-button class="buy-btn" @click="buyNowFn">立即购买</van-button>
       </van-col>
     </van-row>
     <!-- 购买 选择尺寸 选择数量 窗口 -->
@@ -113,7 +113,8 @@ export default {
       selectPrice: '',
       selMark: [],
       selNum: 1,
-      spec_length: 0
+      spec_length: 0,
+      sureType: '', // buyNow:立即购买  addCard:添加购物车
     }
   },
   mounted () {
@@ -136,13 +137,6 @@ export default {
       this.$router.push('/myOrders')
     },
     addSpecMark (data) {
-      // 设置 默认 选择规格
-      // let once = 0
-      // for (let key in data.spec_price) {
-      //   if (once>0) break
-      //   this.selMark = key.split("_")
-      // }
-
       // 设置规格 类别数量
       this.spec_length = data.spec.length
       // 给 规格添加标记
@@ -170,51 +164,61 @@ export default {
             item.selected = false
           }, 1000)
         }
-        // this.$toast(this.productMsg.spec_price[this.selMark.join('_')].price)
       }
-
-      //
-      // if (this.selMark.length === this.spec_length && !this.productMsg.spec_price[this.selMark.join('_')]) {
-      //   return this.$toast('暂无此规格')
-      // }
       //
       let oldVal = item.selected
       values.forEach(item => (item.selected = false))
       item.selected = !oldVal
     },
-    // 加入购物车
-    addCard () {
-      this.$ajax.post('/cart/mod', {
+    postAddProd () {
+      this.$ajax.post('/cart/add', {
         product_id: this.productMsg.id,
         quantity: this.selNum,
         product_spec_id: this.productMsg.spec_price[this.selMark.join('_')].id
       })
       .then(({status, data, msg}) => {
-          if (parseInt(status) === 1) {
-            this.buyNow = false
-          }
-          this.$toast(msg)
+        if (parseInt(status) === 1) {
+          this.buyNow = false
+          this.$toast('商品添加成功')
+        }
       })
       .catch(err => {
         this.$toast(JSON.stringify(msg))
       })
     },
-    // 立即购买
+    // 加入购物车
+    addCard () {
+      this.sureType = 'addCard'
+      this.buyNow = true
+    },
+    //
+    buyNowFn () {
+      this.sureType = 'buyNow'
+      this.buyNow = true
+    },
+    // 选择完毕规格 确定
     goToPay () {
-      let orderMsg = {
-        product_id: this.productMsg.id,
-        product_title: this.productMsg.title,
-        product_price: this.selectPrice,
-        quantity: this.selNum,
-        product_spec_id: this.productMsg.spec_price[this.selMark.join('_')].id,
-        product_img: this.productMsg.thumb[0]
+      if (this.sureType === 'addCard') {
+        this.postAddProd()
       }
-      // 计算总价
-      this.$store.commit('changeAllMoney', orderMsg.product_price * orderMsg.quantity)
-      this.$store.commit('orderNow', orderMsg)
-      this.$router.push({
-        path: '/payment',
-      })
+      // 立即购买
+      else {
+        let orderMsg = {
+          product_id: this.productMsg.id,
+          product_title: this.productMsg.title,
+          product_price: this.selectPrice,
+          quantity: this.selNum,
+          product_spec_id: this.productMsg.spec_price[this.selMark.join('_')].id,
+          product_img: this.productMsg.thumb[0]
+        }
+
+        // 计算总价
+        this.$store.commit('changeAllMoney', orderMsg.product_price * orderMsg.quantity)
+        this.$store.commit('orderNow', orderMsg)
+        this.$router.push({
+          path: '/payment',
+        })
+      }
     }
   }
 }

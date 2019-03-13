@@ -53,9 +53,13 @@ export default {
     }
   },
   mounted () {
-    this.$ajax.get('/cart/')
-      .then(res => {
-        this.$toast(JSON.stringify(res))
+    this.$ajax.get('/cart/index')
+      .then(({status, data, msg}) => {
+        if (parseInt(status) === 1) {
+          this.$store.commit('updateShoppingCart', data)
+        } else {
+          this.$toast(msg)
+        }
       })
     // this.$store.state.shoppingList = []
   },
@@ -158,7 +162,6 @@ export default {
         margin-right: 13px;
         width: 86px;
         height: 90px;
-        border: 1px solid #ccc;
       }
       &>div>div {
         &:first-child {

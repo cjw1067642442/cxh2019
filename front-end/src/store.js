@@ -2,10 +2,12 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import area from './libs/area'
 
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    token: '',
     selectedList: [],
     allMoney: 0,
     areaList: area,
@@ -26,6 +28,10 @@ export default new Vuex.Store({
     // 立即下单
     orderNow(state, orderMsg) {
       state.selectedList = [orderMsg]
+    },
+    // 更新购物车
+    updateShoppingCart (state, newList) {
+      state.shoppingList = [...state.shoppingList, ...newList]
     }
   },
   actions: {

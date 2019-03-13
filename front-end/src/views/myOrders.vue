@@ -235,7 +235,8 @@ export default {
     }
   },
   mounted () {
-    if (this.$route.params.active) this.active = this.$route.query.active
+    if (this.$route.query.active) this.active = this.$route.query.active
+    if (this.$route.params.active) this.active = this.$route.params.active
     // 全部
     this.$ajax.post('/order/list', { status: this.active })
       .then(res => {
