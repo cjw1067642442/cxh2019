@@ -7,7 +7,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    token: '',
+    token: '946e84f86519t7d9ca47910d129168d2',
     selectedList: [],
     allMoney: 0,
     areaList: area,
