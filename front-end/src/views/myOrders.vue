@@ -24,8 +24,11 @@
           <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
             <van-list
               v-model="loading"
-              :finished="all.finished"
+              :finished="finished"
               finished-text="没有更多了"
+              :error.sync="error"
+              error-text="请求失败，点击重新加载"
+              :offset="listOffset"
               @load="onLoad"
               >
               <van-cell class="my-card" v-for="card in all.list" :key="card.id" @click.stop.prevent="checkOrderDetail(card)">
@@ -67,8 +70,11 @@
           <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
             <van-list
               v-model="loading"
-              :finished="toBePaid.finished"
+              :finished="finished"
               finished-text="没有更多了"
+              :error.sync="error"
+              error-text="请求失败，点击重新加载"
+              :offset="listOffset"
               @load="onLoad"
               >
               <van-cell class="my-card" v-for="card in toBePaid.list" :key="card.id" @click.stop.prevent="checkOrderDetail(card)">
@@ -103,8 +109,11 @@
           <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
               <van-list
                 v-model="loading"
-                :finished="toBeDelivered.finished"
+                :finished="finished"
                 finished-text="没有更多了"
+                :error.sync="error"
+                error-text="请求失败，点击重新加载"
+                :offset="listOffset"
                 @load="onLoad"
                 >
                 <van-cell class="my-card" v-for="card in toBeDelivered.list" :key="card.id" @click.stop.prevent="checkOrderDetail(card)">
@@ -134,8 +143,11 @@
           <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
             <van-list
               v-model="loading"
-              :finished="pendingReceipt.finished"
+              :finished="finished"
               finished-text="没有更多了"
+              :error.sync="error"
+              error-text="请求失败，点击重新加载"
+              :offset="listOffset"
               @load="onLoad"
               >
               <van-cell class="my-card" v-for="card in pendingReceipt.list" :key="card.id" @click.stop.prevent="checkOrderDetail(card)">
@@ -168,8 +180,11 @@
           <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
             <van-list
               v-model="loading"
-              :finished="completed.finished"
+              :finished="finished"
               finished-text="没有更多了"
+              :error.sync="error"
+              error-text="请求失败，点击重新加载"
+              :offset="listOffset"
               @load="onLoad"
               >
               <van-cell class="my-card" v-for="card in completed.list" :key="card.id" @click.stop.prevent="checkOrderDetail(card)">
@@ -209,52 +224,43 @@ export default {
       isLoading: false,
       // 列表加载
       loading: false,
+      error: false,
       page: 1,
       finished: false,
       cancelingOrder: false,
+      listOffset: 400,
       all: {
         title: '全部',
         list: [],
-        finished: true
       },
       toBePaid: {
         title: '待支付',
         list: [],
-        finished: true
       },
       toBeDelivered: {
         title: '待发货',
         list: [],
-        finished: true
       },
       pendingReceipt: {
         title: '待收货',
         list: [],
-        finished: true
       },
       completed: {
         title: '已完成',
         list: [],
-        finished: true
       },
       tabType: ''
     }
   },
-  beforeMounted() {
-    if (this.$route.query.active) this.active = this.$route.query.active
-    if (this.$route.params.active) this.active = this.$route.params.active
+  beforeMount() {
+    if (this.$route.query.active) this.active = parseInt(this.$route.query.active)
+    if (this.$route.params.active) this.active = parseInt(this.$route.params.active)
     this.tabType = this.getType()
     this[this.tabType].finished = false
   },
   mounted () {
-    // 全部
-    this.$ajax.post('/order/list', { status: this.active })
-      .then(res => {
-        this[this.tabType].list = [...res.data]
-      })
-      .catch(err => {
-        this.$toast(JSON.stringify(err))
-      })
+    // this.onLoad()
+    this.changeTab()
   },
   methods: {
     onClickLeft () {
@@ -264,10 +270,9 @@ export default {
       let type = this.getType()
       this.tabType = type
       this.page = 1
-      this.loadloading = true
-      this[type].finished = false
+      this.loading = false
+      this.finished = false
       this[type].list.length = 0
-      // this.onLoad()
     },
     onRefresh () {
       this.initData()
@@ -277,12 +282,16 @@ export default {
           this.isLoading = false
         })
     },
-    onLoad () {
+    onLoad (change) {
+      if (this.page === 1 && !change) return
       this.getListData()
     },
     getType () {
       let type = ''
       switch (this.active) {
+        case 0:
+          type = 'all'
+          break;
         case 1:
           type = 'toBePaid'
           break;
@@ -292,19 +301,16 @@ export default {
         case 3:
           type = 'pendingReceipt'
           break;
-        case 4:
-          type = 'completed'
-          break;
         default:
-          type = 'all'
+          type = 'completed'
       }
       return type
     },
     // 切换 状态
     changeTab () {
       this.initData()
-      // status: 0 全部, 1 待支付， 2 代发货，3 代收货，4 已完成, 5 已取消
-      // return this.getListData()
+      /* !!!千万不要干掉这个参数 会出现严重 bug */
+      this.onLoad('changeTab')
     },
     getListData() {
       return this.$ajax.get(`/order/list?status=${this.active}&page=${this.page}`)
@@ -312,17 +318,16 @@ export default {
           if (parseInt(status) === 1) {
             // let { data } = res
             this.page++
-
             if (data && data.length === 0) {
-              this[this.tabType].finished = true
+              this.finished = true
             }
-            console.log(this.tabType);
-            // let type = this.getType()
             this[this.tabType].list = [...this[this.tabType].list, ...data]
           }
           this.loading = false
         })
         .catch(err => {
+          this.loading = false
+          this.error = true
           this.$toast(err + 'order/list')
         })
     },

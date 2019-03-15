@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { Toast } from 'vant'
 import qs from 'qs'
 
 export default {

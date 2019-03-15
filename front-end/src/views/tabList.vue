@@ -1,17 +1,49 @@
 <template lang="html">
-  <div class="no-list">
+  <div class="tabs-list">
     <van-nav-bar
-      title='列表'
+      :title='headerTitle'
       left-text=''
       left-arrow
       :border='false'
       @click-left='onClickLeft'
     />
-    <van-tabs>
-      <van-tab v-for= "tab in tabList" :title="tab.title">
-      {{tab.title}}
-      </van-tab>
+    <template v-if="tabList.length > 1">
+      <van-tabs
+      v-if=""
+      v-model="active"
+      color="#D6454C"
+      title-inactive-color="#3C3A39"
+      title-active-color="#D6454C"
+      :sticky="true"
+      :line-width="30"
+      :line-height="3"
+      :swipeable="true"
+      :fixed="true"
+      :animated="false"
+      @change="changeTab"
+      >
+      <van-tab v-for= "tab in tabList" :title="tab.title"></van-tab>
     </van-tabs>
+    </template>
+    <van-list
+      v-model="loading"
+      :finished="finished"
+      :error.sync="error"
+      error-text="请求失败，点击重新加载"
+      finished-text="没有更多了"
+      @load="onLoad"
+    >
+      <van-cell
+        v-for="(item, idx) in list"
+        :key="idx"
+        class="my-list"
+      >
+        <div class="tab-title tx-c-333 van-hairline--bottom">{{item.title}}</div>
+        <div class="tab-labels tx-c-999">
+          <span v-for="label in item.labels">{{label}}</span>
+        </div>
+      </van-cell>
+    </van-list>
   </div>
 </template>
 
@@ -19,22 +51,124 @@
 export default {
   data () {
     return {
-      list: [
-        {
-          title: '1',
-          status: 0,
-          url: '/kskdf'
-        },
-        {
-          title: '2',
-          status: 1,
-          url: '/lkoo'
-        }
-      ]
+      active: 0,
+      headerTitle: '',
+      tabList: [],
+      loading: false,
+      finished: false,
+      error: false,
+      list: [],
+      page: 1
     }
+  },
+  created () {
+    console.log(this.$route.query);
+    let { title, active = 0, where } = this.$route.query
+    console.log(title, active = 0, where);
+    this.active = 0
+    this.headerTitle = '列表标题'
+    this.$ajax.get('/list_tab?where='+where)
+      .then(({status, data, msg}) => {
+        if (parseInt(status) === 1) {
+          this.tabList = [...data]
+        } else {
+          this.$toast(msg)
+        }
+      })
+      .catch(() => {
+        this.$toast('网络错误，请返回上一页后重新打开')
+      })
+  },
+  mounted () {
+    this.tabList = [
+      {
+        title: '1',
+        status: 0,
+        url: '/kskdf'
+      }
+    ]
+    this.changeTab()
+
+    this.list = [
+      {
+        title: 'list titlealkdsjfkl 拉克丝剪短发了佳世客东方丽景拉萨的积分拉丝机的弗兰克就撒的发了肯定就是发卡上的了杰拉德设计费离开到时建安费',
+        labels: ['label-1', 'label-1', 'label-1', 'label-1']
+      },
+      {
+        title: 'list title2222',
+        labels: ['label-1']
+      }
+    ]
+  },
+  methods: {
+    onClickLeft () {
+      window.goBackNative()
+    },
+    init () {
+      this.list.length = 0
+      this.page = 1
+    },
+    changeTab () {
+      this.init()
+      this.onLoad('change')
+    },
+    onLoad (isChange) {
+      if (this.page === 1 && !isChange) return
+      let tab = this.tabList[this.active]
+      this.$ajax.get(`${tab.url}?status=${tab.status}`)
+        .then(({status, data, msg}) => {
+          if (parseInt(status) === 1) {
+            if (data.length === 0) this.finished = true
+            this.list = [...this.list, ...data]
+          }
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+          this.error = true
+        })
+    },
   }
 }
 </script>
 
 <style lang="scss">
+.tabs-list {
+  background-color: #F2F2F3;
+
+  .my-list {
+    margin-top: 5px;
+  }
+  .van-hairline--bottom {
+    position: relative;
+
+    &::after {
+      content: ' ';
+      position: absolute;
+      // pointer-events: none;
+      box-sizing: border-box;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      top: auto;
+      // height: 0;
+      // line-height: 0;
+      transform: scaleY(.5);
+      border-bottom: 1px solid #ccc;
+    }
+  }
+  .tab-title {
+    // margin-bottom: 3px;
+    padding-bottom: 8px;
+    line-height: 20px;
+    font-size: 16px;
+  }
+  .tab-labels {
+    font-size: 10px;
+
+    span {
+      margin-right: 10px;
+    }
+  }
+}
 </style>
