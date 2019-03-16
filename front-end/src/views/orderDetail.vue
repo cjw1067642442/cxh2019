@@ -7,7 +7,7 @@
       :border="false"
       @click-left="onClickLeft"
     />
-    <div class="paid-time" flex>
+    <div class="paid-time" flex="main:justify" v-cloak>
       <div class="paid-time-tx">
         <template v-if="status==1">
           <div>等待买家付款</div>
@@ -27,7 +27,9 @@
         </template>
       </div>
       <div class="paid-time-pic">
-        <img src="" alt="">
+        <img src="../assets/boss-payfor.png" alt="" v-if="status==1">
+        <img src="../assets/fahuo.png" alt="" v-else-if="status==2">
+        <img src="../assets/baoguo.png" alt="" v-else>
       </div>
     </div>
     <!-- 地址 -->
@@ -108,18 +110,16 @@
       <!-- 待发货 -->
       <template v-else-if="status==2">
         <van-button class="card-btn orange-btn van-hairline--surround" size="small" :round="true" @click.stop="fixedOrder">修改订单</van-button>
-        <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop='cancelOrder'>申请退款</van-button>
       </template>
       <!-- 待收货 -->
       <template v-else-if="status==3">
         <van-button class="card-btn orange-btn van-hairline--surround" size="small" :round="true" @click.stop="paid">确认收货</van-button>
-        <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop='cancelOrder'>取消订单</van-button>
       </template>
       <!-- 已完成 -->
-      <template v-else-if="status==4">
+      <!-- <template v-else-if="status==4">
         <van-button class="card-btn orange-btn van-hairline--surround" size="small" :round="true" @click.stop="paid">修改订单</van-button>
         <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop='cancelOrder'>申请退款</van-button>
-      </template>
+      </template> -->
     </div>
   </div>
 </template>
@@ -132,7 +132,7 @@
     data () {
       return {
         // status: 0 全部, 1 待支付， 2 待发货，3 待收货，4 已完成, 5 已取消
-        status: 1,
+        status: 0,
         goActive: '',
         data: {},
         cancelId: ''
@@ -227,7 +227,12 @@
       }
 
       .paid-time-pic {
+        margin-right: 58px;
         height: 76px;
+
+        img {
+          width: 80px;
+        }
       }
     }
     .paid-addr {

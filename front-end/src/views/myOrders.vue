@@ -54,7 +54,6 @@
                 </div>
                 <div class="res-total tx-right">共{{compQua(card.details)}}件商品 合计: <strong>¥{{card.total}}</strong></div>
                 <div class="card-footer tx-right" v-if="card.status==1">
-                  <!-- <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop="fixAddr(card)">修改地址</van-button> -->
                   <van-button class="card-btn van-hairline--surround" size="small" :round="true" @click.stop="cancelOrder(card)">取消订单</van-button>
                   <van-button class="card-btn orange-btn van-hairline--surround" size="small" :round="true" @click.stop="paid(card)">付款</van-button>
                 </div>

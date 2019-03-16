@@ -50,7 +50,7 @@ export default {
     },
     // 切换是否使用默认地址时触发
     changeDefault (value) {
-      this.$toast(value+' 122')
+      this.defaultInfo.is_default = value
     },
     // 确定修改
     onSave (content) {
@@ -63,9 +63,7 @@ export default {
       data.name = content.name
       data.phone = content.tel
       data.default = content.isDefault ? 1 : 0
-
       let url = this.isNew ? '/address/add' : '/address/mod'
-
       this.$ajax.post(url, data)
         .then(({status, data, msg}) => {
           if (parseInt(status) === 1) {
@@ -74,10 +72,26 @@ export default {
             this.$toast(msg)
           }
         })
-
+        .catch(() => {
+          this.$toast('网络错误，请稍后重试')
+        })
     },
-    onDelete (content) {
-      this.$toast(JSON.stringify(content))
+    // 删除地址
+    onDelete () {
+      this.$ajax.post('/address/del', {
+          id: this.defaultInfo.id
+        })
+        .then(({status, data, msg}) => {
+          if (parseInt(status) === 1) {
+            this.$dialog.alert({
+              title: '删除地址',
+              message: '地址删除成功',
+            })
+            .then(() => {
+              this.onClickLeft()
+            })
+          }
+        })
     }
   },
   computed: {

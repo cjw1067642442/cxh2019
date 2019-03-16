@@ -7,23 +7,23 @@
       :border='false'
       @click-left='onClickLeft'
     />
-    <template v-if="tabList.length > 1">
+    <template v-if="tabList.length>1">
       <van-tabs
-      v-if=""
-      v-model="active"
-      color="#D6454C"
-      title-inactive-color="#3C3A39"
-      title-active-color="#D6454C"
-      :sticky="true"
-      :line-width="30"
-      :line-height="3"
-      :swipeable="true"
-      :fixed="true"
-      :animated="false"
-      @change="changeTab"
-      >
-      <van-tab v-for= "tab in tabList" :title="tab.title"></van-tab>
-    </van-tabs>
+        v-if=""
+        v-model="active"
+        color="#D6454C"
+        title-inactive-color="#3C3A39"
+        title-active-color="#D6454C"
+        :sticky="true"
+        :line-width="30"
+        :line-height="3"
+        :swipeable="true"
+        :fixed="true"
+        :animated="false"
+        @change="changeTab"
+        >
+        <van-tab v-for= "tab in tabList" :title="tab.tab"></van-tab>
+      </van-tabs>
     </template>
     <van-list
       v-model="loading"
@@ -32,12 +32,12 @@
       error-text="请求失败，点击重新加载"
       finished-text="没有更多了"
       @load="onLoad"
-    >
+      >
       <van-cell
         v-for="(item, idx) in list"
         :key="idx"
         class="my-list"
-      >
+        >
         <div class="tab-title tx-c-333 van-hairline--bottom">{{item.title}}</div>
         <div class="tab-labels tx-c-999">
           <span v-for="label in item.labels">{{label}}</span>
@@ -62,12 +62,10 @@ export default {
     }
   },
   created () {
-    console.log(this.$route.query);
-    let { title, active = 0, where } = this.$route.query
-    console.log(title, active = 0, where);
+    let { title, active = 0, where='user_net' } = this.$route.query
     this.active = 0
     this.headerTitle = '列表标题'
-    this.$ajax.get('/list_tab?where='+where)
+    this.$ajax.get('/common/tablist?where='+where)
       .then(({status, data, msg}) => {
         if (parseInt(status) === 1) {
           this.tabList = [...data]
@@ -80,19 +78,24 @@ export default {
       })
   },
   mounted () {
-    this.tabList = [
-      {
-        title: '1',
-        status: 0,
-        url: '/kskdf'
-      }
-    ]
     this.changeTab()
 
     this.list = [
       {
         title: 'list titlealkdsjfkl 拉克丝剪短发了佳世客东方丽景拉萨的积分拉丝机的弗兰克就撒的发了肯定就是发卡上的了杰拉德设计费离开到时建安费',
         labels: ['label-1', 'label-1', 'label-1', 'label-1']
+      },
+      {
+        title: 'list title2222',
+        labels: ['label-1']
+      },
+      {
+        title: 'list title2222',
+        labels: ['label-1']
+      },
+      {
+        title: 'list title2222',
+        labels: ['label-1']
       },
       {
         title: 'list title2222',
@@ -115,9 +118,10 @@ export default {
     onLoad (isChange) {
       if (this.page === 1 && !isChange) return
       let tab = this.tabList[this.active]
-      this.$ajax.get(`${tab.url}?status=${tab.status}`)
+      this.$ajax.get(`${tab.url.replace('/app', '')}&page=${this.page}`)
         .then(({status, data, msg}) => {
           if (parseInt(status) === 1) {
+            this.page++
             if (data.length === 0) this.finished = true
             this.list = [...this.list, ...data]
           }

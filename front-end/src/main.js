@@ -13,12 +13,14 @@ import axios from 'axios'
 import getQuery from './libs/query.js'
 
 // 定义token  946e84f86519t7d9ca47910d129168d2
-let token = getQuery('token')
+let token = process.env.NODE_ENV === 'production' ? getQuery('token') : '946e84f86519t7d9ca47910d129168d2' 
 if (token) {
   axios.defaults.headers.token = token
   axios.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
   store.state.token = token
 }
+
+window.goBackNative =  function () {}
 
 Vue.config.productionTip = false
 Vue.use(Vant)
@@ -33,7 +35,6 @@ router.beforeEach((to, from, next) => {
   }
   next()
 })
-
 
 new Vue({
   router,

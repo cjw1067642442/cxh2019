@@ -12,53 +12,91 @@
       <div><strong class="tx-c-red">￥{{total | rmb}}</strong></div>
       <div>待付款</div>
     </div>
-    <div class="pay-msg" flex="dir:top">
-      <div flex="">
-        <span class="label">收款方户名</span><input type="text"  readonly flex-box="1" v-model="name">
-      </div>
-      <div flex="">
-        <span class="label">收款方开户行</span><input type="text" readonly flex-box="1" v-model="bank">
-      </div>
-      <div flex="main:justify">
-        <div>
-          <span class="label">收款方账号</span>
-          <span>{{card_no}}</span>
-          <input type="text" class="hide-inp" v-model="card_no" readonly ref="account" />
-        </div>
-        <button type="button" @click.stop="copyAccount">复制</button>
-      </div>
-      <div flex="main:justify">
-        <div>
-          <span class="label">汇款时备注内容</span>
-          <span class="tx-c-red">{{payment_no}}</span>
-          <input type="text" class="hide-inp" v-model="payment_no" ref="memo" />
-        </div>
-        <button type="button" @click.stop="copyMemo">复制</button>
-      </div>
+    <van-tabs
+      :sticky="true"
+      :line-width="25"
+      :line-height="3"
+      :swipeable="true"
+      :fixed="true"
+      color="#D6454C"
+      title-inactive-color="#3C3A39"
+      title-active-color="#D6454C"
+      :animated="false"
+      class="pay-win">
+      <van-tab v-for="pay in payMethod" :title="pay.pname">
+        <template v-if="pay.type==='txt'">
+          <div class="pay-msg" flex="dir:top">
+            <div flex="">
+              <span class="label">收款方户名</span><input type="text"  readonly flex-box="1" v-model="pay.name">
+            </div>
+            <div flex="">
+              <span class="label">收款方开户行</span><input type="text" readonly flex-box="1" v-model="pay.bank">
+            </div>
+            <div flex="main:justify">
+              <div>
+                <span class="label">收款方账号</span>
+                <span>{{pay.card_no}}</span>
+                <input type="text" class="hide-inp" v-model="pay.card_no" readonly :id="'account'+pay.method" />
+              </div>
+              <button type="button" @click="copyAccount(pay.method)">复制</button>
+            </div>
+            <div flex="main:justify cross:center">
+              <div>
+                <span class="label">汇款时备注内容</span>
+                <span class="tx-c-red">{{payment_no}}</span>
+                <input type="text" class="hide-inp" v-model="payment_no" :id="'memo'+pay.method" />
+              </div>
+              <button type="button" @click="copyMemo(pay.method)">复制</button>
+            </div>
+          </div>
+        </template>
+        <template v-else>
+          <div class="pay-msg" flex="dir:top">
+            <div class="img-pay" flex="main:center cross:center">
+              <img :src="pay.img" alt="">
+            </div>
+            <div flex="main:justify cross:center">
+              <div>
+                <span class="label">汇款时备注内容</span>
+                <span class="tx-c-red">{{payment_no}}</span>
+                <input type="text" class="hide-inp" v-model="payment_no" :ref="'memo'+pay.method" />
+              </div>
+              <button type="button" @click="copyMemo(pay.method)">复制</button>
+            </div>
+          </div>
+        </template>
+      </van-tab>
+    </van-tabs>
+    <div class="sure-pay-for" flex="cross:center">
+      <van-button @click='surePayMoney'>确认付款</van-button>
     </div>
   </div>
 </template>
 
 <script>
+function $(id) {
+  return document.getElementById(id)
+}
 export default {
   data () {
     return {
-      name: '',
-      bank: '',
-      card_no: '',
+      order_id: '',
+      payMethod: {},
       payment_no: '',
-      total: 0
+      total: 0,
+      selMethod: ''
+      // imgSrc: ''
     }
   },
   mounted () {
-    this.$ajax.post('/order/paymentPrepare', { order_id: this.$route.query.id })
+    this.order_id = this.$route.query.id
+    this.$ajax.post('/order/paymentPrepare', { order_id: this.order_id })
       .then(({status, data, msg}) => {
         if (parseInt(status) === 1) {
-          this.name = data.name
-          this.bank = data.bank
-          this.card_no = data.card_no
+          this.payMethod = [...data.payMethod]
           this.payment_no = data.payment_no
           this.total = data.total
+          this.method = this.payMethod[0].method
         }
         else {
           this.$toast(msg)
@@ -74,15 +112,39 @@ export default {
         path: '/myOrders'
       })
     },
-    copyAccount () {
-      this.$refs.account.select()
+    copyAccount (method) {
+      let element = $('account' + method)
+      element.select()
       document.execCommand("Copy")
       this.$toast('账号复制成功')
     },
-    copyMemo () {
-      this.$refs.memo.select()
+    copyMemo (method) {
+      let element = $('memo'+method)
+      element.select()
       document.execCommand("Copy")
       this.$toast('备注复制成功')
+    },
+    surePayMoney () {
+      this.$ajax.post('/order/payConfirm',{
+        order_id: this.order_id,
+        method: this.selMethod
+      })
+      .then(({status, data, msg}) => {
+        if (parseInt(status) === 1) {
+          this.$dialog.alert({
+            title: '成功',
+            message: '订单已确认付款'
+          })
+          .then(() => {
+            this.$router.push({
+              path: 'myOrders',
+              query: {
+                active: 2
+              }
+            })
+          })
+        }
+      })
     }
   }
 }
@@ -110,8 +172,11 @@ export default {
       color: #FEC538;
     }
   }
-  .pay-msg {
+
+  .pay-win {
     margin-top: 5px;
+  }
+  .pay-msg {
     padding: 0 15px;
     font-size: 14px;
     background-color: #FFF;
@@ -119,6 +184,14 @@ export default {
     &>div {
       margin: 15px 0;
       line-height: 20px;
+    }
+    .img-pay {
+      margin: 0;
+      padding: 20px;
+
+      img {
+        width: 200px;
+      }
     }
 
     .label {
@@ -143,5 +216,29 @@ export default {
       background-color: #FFF;
     }
   }
+  .sure-pay-for {
+    box-sizing: border-box;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0 10px;
+    height: 50px;
+    background: #FFF;
+
+    button {
+      width: 100%;
+      color: #fff;
+      border-radius: 6px;
+      background-color: #D6454C;
+    }
+  }
+
+  // .van-tabs__track {
+  //   height: auto;
+  //   .van-tab__pane {
+  //     display: inline-block;
+  //   }
+  // }
 }
 </style>
