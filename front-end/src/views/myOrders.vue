@@ -263,7 +263,9 @@ export default {
   },
   methods: {
     onClickLeft () {
-      this.$router.go(-1)
+      window.goBackNative()
+
+      // this.$router.go(-1)
     },
     initData () {
       let type = this.getType()

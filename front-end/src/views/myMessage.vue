@@ -11,6 +11,8 @@
       v-model="loading"
       :finished="finished"
       finished-text="没有更多了"
+      :error.sync="error"
+      error-text="请求失败，点击重新加载"
       @load="onLoad"
       >
       <van-cell v-for="item in list" :key="item.id">
@@ -29,18 +31,36 @@ export default {
     return {
       loading: false,
       finished: false,
+      error: false,
+      page: 1,
       list: []
     }
   },
   mounted () {
-    this.list = require('../../data-factory/mymsg.json').data
+
   },
   methods: {
     onClickLeft() {
-      this.$router.go(-1)
+      window.goBackNative()
+      // this.$router.go(-1)
     },
     onLoad () {
-      console.log(1);
+      this.$ajax
+        .get('/article/list?page=' + this.page)
+        .then(({status, data, msg}) => {
+          if (parseInt(status) === 1) {
+            this.page++
+            if (data.length === 0) this.finished = true
+            this.list = [...this.list, ...data]
+          }
+          this.loading = false
+        })
+        .catch(() => {
+          this.finished = false
+          this.loading = false
+          this.error = true
+          this.$toast('网络错误，请稍后重试')
+        })
     }
   }
 }

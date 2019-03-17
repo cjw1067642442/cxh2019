@@ -79,29 +79,6 @@ export default {
   },
   mounted () {
     this.changeTab()
-
-    this.list = [
-      {
-        title: 'list titlealkdsjfkl 拉克丝剪短发了佳世客东方丽景拉萨的积分拉丝机的弗兰克就撒的发了肯定就是发卡上的了杰拉德设计费离开到时建安费',
-        labels: ['label-1', 'label-1', 'label-1', 'label-1']
-      },
-      {
-        title: 'list title2222',
-        labels: ['label-1']
-      },
-      {
-        title: 'list title2222',
-        labels: ['label-1']
-      },
-      {
-        title: 'list title2222',
-        labels: ['label-1']
-      },
-      {
-        title: 'list title2222',
-        labels: ['label-1']
-      }
-    ]
   },
   methods: {
     onClickLeft () {

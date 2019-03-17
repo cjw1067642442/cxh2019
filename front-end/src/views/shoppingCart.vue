@@ -65,7 +65,9 @@ export default {
   },
   methods: {
     onClickLeft () {
-      this.$router.go(-1)
+      window.goBackNative()
+
+      // this.$router.go(-1)
     },
     // 全选的情况  取消 其中一个
     doSimgle (prod) {

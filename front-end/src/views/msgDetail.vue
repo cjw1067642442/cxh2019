@@ -10,7 +10,7 @@
     <div class="detail-content">
       <div class="d-title">{{title}}</div>
       <div class="d-time">{{create_time}}</div>
-      <div class="d-content-detail" v-html="content"></div>
+      <div class="d-content-detail" v-html="content" v-cloak></div>
     </div>
   </div>
 </template>
@@ -19,12 +19,26 @@
 export default {
   data () {
     return  {
-      title: '我的消息',
-      create_time: 1551539849,
-      content: ''
+      title: '',
+      create_time: '',
+      content: '',
+      id: ''
     }
   },
   mounted () {
+    this.id = this.$route.params.id ? this.$route.params.id : this.$route.query.id
+    this.$ajax
+      .get('/article/detail?id='+this.id)
+      .then(({status, data, msg}) => {
+        if (parseInt(status) === 1) {
+          this.title  = data.title
+          this.content  = data.content
+          this.create_time  = data.create_time
+        }
+      })
+      .catch(() => {
+        this.$toast('网络繁忙，请稍后重试')
+      })
     // this.$ajax.get('')
   },
   methods: {

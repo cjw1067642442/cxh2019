@@ -30,7 +30,7 @@
       <van-tabs v-model="prodAct" :animated="true" :swipeable="true" :sticky="true">
         <van-tab title="图文详情">
           <div class="pic-detail" flex="dir:top">
-            <img v-for="img in productMsg.details" :src="img" />
+            <img v-for="img in productMsg.details" v-lazy="img" />
           </div>
         </van-tab>
         <van-tab title="购买须知" v-html="purchaseNotes" class="purchase-notes"></van-tab>
@@ -39,7 +39,9 @@
     <!-- 底部购买 按钮 -->
     <van-row class="prod-btn-grop">
       <van-col span="4" flex="main:center">
-        <router-link class="shop-cart-btn" to="/shoppingcart"></router-link>
+        <router-link class="shop-cart-btn" to="/shoppingcart">
+          <span class="order-num" v-if="orderNum">{{orderNum}}</span>
+        </router-link>
       </van-col>
       <van-col span="10">
         <van-button class="cart-btn" @click.stop="addCard">加入购物车</van-button>
@@ -67,7 +69,7 @@
           <div class="cond-spec" v-for="(spec, spIdx) in productMsg.spec">
             <p>{{spec.name}}</p>
             <div flex="">
-              <span v-for="(v, idx) in spec.value" :class="{'sel-spec': v.selected}" @click.stop.prevent="selSpec(spIdx,idx,spec.value,v)">{{v.key}}</span>
+              <span v-for="(v, idx) in spec.value" :class="{'sel-spec': v.selected}" @click.stop.prevent="selSpec(spIdx,spec.id,spec.value,v)">{{v.key}}</span>
             </div>
           </div>
           <div class="cond-spec">
@@ -88,6 +90,8 @@ export default {
   data () {
     return {
       autoplay: 0,
+      page: 1,
+      orderNum: 0,
       id: '',
       // 购买须知
       purchaseNotes: '',
@@ -118,11 +122,16 @@ export default {
     }
   },
   mounted () {
+    // this.$dialog.alert({
+    //   title: 'debugger',
+    //   message: location.href + '-debug'
+    // })
     this.$ajax
       .get('/product/details?id=' + this.$route.query.id)
       .then(({status, data, msg}) => {
         if (parseInt(status) === 1) {
           (this.productMsg = this.addSpecMark(data))
+          this.purchaseNotes = data.purchaseNotes
         } else {
           this.$toast.fail(msg)
         }
@@ -130,11 +139,25 @@ export default {
       .catch(err => {
         this.$toast.fail(JSON.stringify(err))
       })
+    //
+    this.getOrderNum()
   },
   methods: {
     onClickLeft () {
+      window.goBackNative()
       // 返回列表页
-      this.$router.push('/myOrders')
+      // this.$router.push('/myOrders')
+    },
+    // 购物车数量
+    getOrderNum () {
+      this.$ajax.get('order/list?status=1&page=' + this.page)
+        .then(({status, data, msg}) => {
+          if (parseInt(status) === 1) {
+            this.page++
+            this.orderNum += data.length
+            if (data.length>0) this.getOrderNum()
+          }
+        })
     },
     addSpecMark (data) {
       // 设置规格 类别数量
@@ -152,7 +175,8 @@ export default {
     },
     // 选择规格
     selSpec (idx, key, values, item) {
-      this.selMark[idx] = key + 1
+      this.selMark[idx] = key
+      console.log(this.selMark);
       if (this.selMark.length === this.spec_length) {
         if (this.productMsg.spec_price[this.selMark.join('_')]) {
           this.selectPrice = this.productMsg.spec_price[this.selMark.join('_')].price
@@ -178,6 +202,7 @@ export default {
       })
       .then(({status, data, msg}) => {
         if (parseInt(status) === 1) {
+          this.orderNum++
           this.buyNow = false
           this.$toast('商品添加成功')
         }
@@ -286,6 +311,12 @@ export default {
 
   .prod-nav {
     padding-bottom: 60px;
+
+    .pic-detail {
+      img {
+        width: 100%;
+      }
+    }
   }
   .purchase-notes {
     padding: 10px 20px;
@@ -303,7 +334,22 @@ export default {
     text-align: center;
     background-color: #FFF;
 
+    .order-num {
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      width: 20px;
+      height: 20px;
+      line-height: 18px;
+      font-size: 10px;
+      color: #FFF;
+      background:  #D6454C;
+      border-radius: 10px;
+      transform: scale3d(.7,.7,.7);
+    }
+
     .shop-cart-btn {
+      position: relative;
       display: block;
       width: 55px;
       height: 50px;
