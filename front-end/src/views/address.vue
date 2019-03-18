@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="addr-list-page">
+  <div class="addr-list-page scroll">
     <van-nav-bar
       title='收货地址'
       left-text=''

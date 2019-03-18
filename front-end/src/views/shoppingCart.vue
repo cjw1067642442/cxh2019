@@ -1,5 +1,5 @@
 <template lang='html'>
-  <div class='shopping-cart'>
+  <div class='shopping-cart scroll'>
     <van-nav-bar
       title='购物车'
       left-text=''
@@ -69,7 +69,7 @@ export default {
       this.getData()
     },
     getData () {
-      this.$ajax.get('/cart/index')
+      return this.$ajax.get('/cart/index')
         .then(({status, data, msg}) => {
           if (parseInt(status) === 1) {
             data.forEach(item => (item.selected = false))
@@ -77,9 +77,9 @@ export default {
           } else {
             this.$toast(msg)
           }
-          this.loading = false
+          this.isLoading = false
         })
-        .catch(() => (this.loading = false))
+        .catch(() => (this.isLoading = false))
     },
     onChange (prod, value) {
       if (prod.quantity === 0) {
@@ -96,6 +96,10 @@ export default {
           .then(({status}) => {
             if (parseInt(status) === 1) {
               this.$toast('删除成功')
+            }
+            else {
+              prod.quantity = 1
+              this.$toast('删除失败' + msg)
             }
           })
         })
@@ -189,7 +193,7 @@ export default {
   background: #F2F2F3;
 }
 .cart-list {
-  padding: 15px;
+  padding: 15px 15px 50px 15px;
 
   .cart-item {
     box-sizing: border-box;
@@ -206,10 +210,14 @@ export default {
         width: 80px;
         height: 88px;
       }
+
       &>div>div {
+        max-width: 120px;
+        width: 100px;
+
         &:first-child {
           margin-bottom: 6px;
-          height: 21px;
+          min-height: 21px;
           line-height: 20px;
           font-size: 15px;
         }

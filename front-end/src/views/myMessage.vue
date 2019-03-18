@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="my-message">
+  <div class="my-message scroll">
     <van-nav-bar
       title='我的消息'
       left-text=''

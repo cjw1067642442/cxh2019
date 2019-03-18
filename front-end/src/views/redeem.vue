@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="redeem-reward">
+  <div class="redeem-reward scroll">
     <van-nav-bar
       title='兑换'
       left-text=''

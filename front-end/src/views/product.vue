@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="product-detail">
+  <div class="product-detail scroll">
     <van-nav-bar
       title='商品详情'
       left-text=''
@@ -169,6 +169,7 @@ export default {
         .then(({status, data, msg}) => {
           if (parseInt(status) === 1) {
             this.orderNum = data.length
+            this.$toast(this.orderNum)
           }
           this.isLoading = false
         })
@@ -189,7 +190,6 @@ export default {
     },
     // 选择规格
     selSpec (idx, key, values, item) {
-      console.log(idx, key, values, item);
       this.selMark[idx] = key
       if (this.selMark.length === this.spec_length) {
 
@@ -217,7 +217,7 @@ export default {
       })
       .then(({status, data, msg}) => {
         if (parseInt(status) === 1) {
-          this.orderNum++
+          this.getOrderNum()
           this.buyNow = false
           this.$toast('商品添加成功')
         }

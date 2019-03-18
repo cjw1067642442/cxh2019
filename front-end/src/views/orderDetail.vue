@@ -109,7 +109,7 @@
       </template>
       <!-- 待发货 -->
       <template v-else-if="status==2">
-        <van-button class="card-btn orange-btn van-hairline--surround" size="small" :round="true" @click.stop="fixedOrder">修改订单</van-button>
+        <!-- <van-button class="card-btn orange-btn van-hairline--surround" size="small" :round="true" @click.stop="fixedOrder">修改订单</van-button> -->
       </template>
       <!-- 待收货 -->
       <template v-else-if="status==3">

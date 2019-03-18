@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="tabs-list">
+  <div class="tabs-list scroll">
     <van-nav-bar
       :title='headerTitle'
       left-text=''
@@ -117,6 +117,7 @@ export default {
 
 <style lang="scss">
 .tabs-list {
+  padding-bottom: 50px;
   background-color: #F2F2F3;
 
   .my-list {

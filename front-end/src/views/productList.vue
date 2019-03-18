@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="product-list-win">
+  <div class="product-list-win scroll">
     <van-nav-bar
       :title='headerTitle'
       left-text=''

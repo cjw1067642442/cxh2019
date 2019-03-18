@@ -35,7 +35,10 @@ export default {
   font-size: 12px;
   height: 100%;
 }
-.scroll {
+.van-pull-refresh__track, .scroll {
   -webkit-overflow-scrolling: touch
+}
+.over-h {
+  overflow-y: hidden;
 }
 </style>

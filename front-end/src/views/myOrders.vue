@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="my-orders">
+  <div class="my-orders scroll" >
     <van-nav-bar
       title='我的订单'
       left-text=''
@@ -8,6 +8,7 @@
       @click-left='onClickLeft'
     />
       <van-tabs
+
         v-model="active"
         @change="changeTab"
         :sticky="true"
@@ -20,7 +21,7 @@
         title-active-color="#D6454C"
         :animated="false">
         <!-- 全部 -->
-        <van-tab class="my-van-tab" :title="all.title">
+        <van-tab class="my-van-tab" :title="all.title" >
           <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
             <van-list
               v-model="loading"
@@ -155,7 +156,7 @@
                   <span class="not-completed-status">待收货</span>
                 </div>
                 <div class="card-content">
-                  <div flex="main:justify" class="card-res-box" v-for="prod in card.details">
+                  <div flex="main:justify" class="card-res-box" v-for="prod in card.details" v-if="prod.status==4">
                     <div class="card-left" flex="dir:left">
                       <img :src="prod.product_img" />
                       <span>{{prod.product_title}}</span>
@@ -379,7 +380,7 @@ export default {
       this.$ajax.post('/order/completed', { order_id: card.id })
         .then(({status, msg}) => {
           if (parseInt(status) === 1) {
-
+            card.status = data.status
           }
           this.$toast(msg)
         })
