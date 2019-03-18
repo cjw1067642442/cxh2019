@@ -169,7 +169,6 @@ export default {
         .then(({status, data, msg}) => {
           if (parseInt(status) === 1) {
             this.orderNum = data.length
-            this.$toast(this.orderNum)
           }
           this.isLoading = false
         })
