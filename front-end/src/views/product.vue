@@ -237,7 +237,9 @@ export default {
     },
     // 选择完毕规格 确定
     goToPay () {
-
+      if (this.selMark.join('_').match('__')) {
+        return this.$toast('请选择规格')
+      }
       if (this.sureType === 'addCard') {
         this.postAddProd()
       }

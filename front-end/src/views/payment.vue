@@ -182,7 +182,7 @@ export default {
         box-sizing: border-box;
         margin-right: 13px;
         width: 86px;
-        // height: 90px;
+        height: 90px;
       }
       &>div>div {
         &:first-child {

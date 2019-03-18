@@ -75,6 +75,11 @@ export default new Router({
       name: 'redeem',
       component: () => import(/* webpackChunkName: "redeem" */ './views/redeem.vue')
     },
+    {
+      path: '/cxgredeem',
+      name: 'cxgredeem',
+      component: () => import(/* webpackChunkName: "cxgredeem" */ './views/cxgredeem.vue')
+    },
     // 我的消息
     {
       path: '/mymessage',
