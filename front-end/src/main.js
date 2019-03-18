@@ -30,6 +30,8 @@ Vue.config.productionTip = false
 Vue.use(Vant)
 Vue.use(Lazyload)
 Vue.use(ajax)
+// 
+Vue.prototype.$error = Vue.$toast
 Object.keys(filters).forEach(k => Vue.filter(k, filters[k]))
 
 // 路由守卫

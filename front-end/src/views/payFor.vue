@@ -19,6 +19,7 @@
       :swipeable="true"
       :fixed="true"
       color="#D6454C"
+      @change="changeType"
       title-inactive-color="#3C3A39"
       title-active-color="#D6454C"
       :animated="false"
@@ -59,7 +60,7 @@
               <div>
                 <span class="label">汇款时备注内容</span>
                 <span class="tx-c-red">{{payment_no}}</span>
-                <input type="text" class="hide-inp" v-model="payment_no" :ref="'memo'+pay.method" />
+                <input type="text" class="hide-inp" v-model="payment_no" :id="'memo'+pay.method" />
               </div>
               <button type="button" @click="copyMemo(pay.method)">复制</button>
             </div>
@@ -85,7 +86,6 @@ export default {
       payment_no: '',
       total: 0,
       selMethod: ''
-      // imgSrc: ''
     }
   },
   mounted () {
@@ -96,7 +96,7 @@ export default {
           this.payMethod = [...data.payMethod]
           this.payment_no = data.payment_no
           this.total = data.total
-          this.method = this.payMethod[0].method
+          this.selMethod = this.payMethod[0].method
         }
         else {
           this.$toast(msg)
@@ -123,6 +123,9 @@ export default {
       element.select()
       document.execCommand("Copy")
       this.$toast('备注复制成功')
+    },
+    changeType (active) {
+      this.selMethod = this.payMethod[active].method
     },
     surePayMoney () {
       this.$ajax.post('/order/payConfirm',{
@@ -179,6 +182,7 @@ export default {
 
   .pay-win {
     margin-top: 5px;
+    padding-bottom: 55px;
   }
   .pay-msg {
     padding: 0 15px 50px 15px;

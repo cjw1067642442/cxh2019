@@ -16,7 +16,7 @@
       @load="onLoad"
       >
       <van-cell v-for="item in list" :key="item.id">
-        <router-link :to="{ name: '/msgDetail', params: {id: item.id} }" class="msg-item">
+        <router-link :to="{ name: 'msgDetail', params: {id: item.id} }" class="msg-item">
           <p class="tx-c-333">{{item.title}}</p>
           <div class="tx-c-999">{{item.create_time | time}}</div>
         </router-link>

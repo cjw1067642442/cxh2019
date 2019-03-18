@@ -167,7 +167,7 @@ export default {
   }
 }
 .cart-list {
-  padding: 15px 0;
+  padding: 15px 0 50px 0;
 
   .cart-item {
     box-sizing: border-box;
@@ -182,17 +182,17 @@ export default {
         box-sizing: border-box;
         margin-right: 13px;
         width: 86px;
-        height: 90px;
+        // height: 90px;
       }
       &>div>div {
         &:first-child {
           margin-bottom: 6px;
-          height: 21px;
+          min-height: 21px;
           line-height: 20px;
           font-size: 15px;
         }
         &:last-child {
-          height: 22px;
+          min-height: 22px;
           line-height: 22px;
           font-size: 16px;
           font-weight: 500;

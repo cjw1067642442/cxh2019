@@ -3,6 +3,7 @@ import qs from 'qs'
 
 export default {
   install (Vue) {
+
     Vue.prototype.$ajax = axios.create({
       baseURL: 'https://app.cxhshop.cc/app', // http://app.cxhshop.cc
       timeout: 60000
@@ -38,11 +39,17 @@ export default {
         }
         if (res.data) {
           return res.data
+        } else {
+          return res
         }
       },
       function(err) {
         return Promise.reject(err)
       }
     )
-  }
+  },
+  setError (errFn) {
+
+  },
+  error: null
 }

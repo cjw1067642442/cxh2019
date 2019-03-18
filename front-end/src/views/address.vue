@@ -22,7 +22,6 @@
         </div>
       </div>
     </div>
-
     <div class="addr-footer">
       <van-button class="add-addr-btn" @click="addAddr">添加地址</van-button>
     </div>
@@ -108,6 +107,7 @@ export default {
   background: #F2F2F3;
 
   .addr-list {
+    padding-bottom: 50px;
     background-color: #FFF;
 
     .addr-item {

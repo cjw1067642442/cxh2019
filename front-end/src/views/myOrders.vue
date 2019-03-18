@@ -258,7 +258,6 @@ export default {
     this[this.tabType].finished = false
   },
   mounted () {
-    // this.onLoad()
     this.changeTab()
   },
   methods: {

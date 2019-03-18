@@ -293,7 +293,7 @@ export default {
   .prod-main {
     box-sizing: border-box;
     padding: 12px 20px;
-    height: 75px;
+    min-height: 75px;
     background-color: #FFF;
 
     .prod-name {
