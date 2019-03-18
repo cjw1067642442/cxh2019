@@ -36,13 +36,9 @@ export default {
       list: []
     }
   },
-  mounted () {
-
-  },
   methods: {
     onClickLeft() {
       window.goBackNative()
-      // this.$router.go(-1)
     },
     onLoad () {
       this.$ajax

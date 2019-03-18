@@ -10,6 +10,7 @@ export default {
       message: '请先登录'
     })
     .then(() => {
+      window.goBackNative()
       // 返回APP
     })
   }

@@ -31,7 +31,7 @@ export default new Vuex.Store({
     },
     // 更新购物车
     updateShoppingCart (state, newList) {
-      state.shoppingList = [...state.shoppingList, ...newList]
+      state.shoppingList = [...newList]
     }
   },
   actions: {

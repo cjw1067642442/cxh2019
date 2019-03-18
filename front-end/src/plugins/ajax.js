@@ -4,7 +4,7 @@ import qs from 'qs'
 export default {
   install (Vue) {
     Vue.prototype.$ajax = axios.create({
-      baseURL: 'http://app.cxhshop.cc/app', // http://app.cxhshop.cc
+      baseURL: 'https://app.cxhshop.cc/app', // http://app.cxhshop.cc
       timeout: 60000
     })
 

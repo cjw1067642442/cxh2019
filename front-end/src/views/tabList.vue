@@ -72,13 +72,14 @@ export default {
         } else {
           this.$toast(msg)
         }
+        this.onLoad('isChange')
       })
       .catch(() => {
         this.$toast('网络错误，请返回上一页后重新打开')
       })
   },
   mounted () {
-    this.changeTab()
+    // this.changeTab()
   },
   methods: {
     onClickLeft () {
@@ -95,6 +96,7 @@ export default {
     onLoad (isChange) {
       if (this.page === 1 && !isChange) return
       let tab = this.tabList[this.active]
+      console.log(this.tabList, this.active);
       this.$ajax.get(`${tab.url.replace('/app', '')}&page=${this.page}`)
         .then(({status, data, msg}) => {
           if (parseInt(status) === 1) {

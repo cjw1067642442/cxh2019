@@ -118,7 +118,6 @@ export default {
   methods: {
     onClickLeft () {
       window.goBackNative()
-      this.$router.go(-1)
     },
     onChangeCurrency () {
       this.dataLoading = true

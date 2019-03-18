@@ -9,13 +9,14 @@
     />
     <!-- 地址 -->
     <div class="paid-addr" flex="cross:center main:justify">
-      <div flex="cross:center main:justify">
+      <div flex="cross:center main:justify" v-if="selAddrMsg">
         <span class="addr-icon"></span>
         <div class="addr-tx">
           <div>{{selAddrMsg.name}}</div>
           <div>{{selAddrMsg.region + selAddrMsg.address}}</div>
         </div>
       </div>
+      <div class="no-addr" @click="selAddr" v-else>还没有地址，请先添加一个地址</div>
       <span class="arr-right" @click="selAddr"><i class="van-icon van-icon-arrow-left van-nav-bar__arrow"></i></span>
     </div>
     <!-- 商品列表 -->
@@ -60,7 +61,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.$route.params);
     if (this.$route.params.name) {
       (this.selAddrMsg = this.$route.params)
     } else {
@@ -68,7 +68,11 @@ export default {
       this.$ajax.get('/address/index')
       .then(({status, data, msg}) => {
         if (parseInt(status) === 1) {
-          this.selAddrMsg = data[0]
+          if (!data[0]) {
+            this.selAddrMsg = ''
+          } else {
+            this.selAddrMsg = data[0]
+          }
         }
       })
     }

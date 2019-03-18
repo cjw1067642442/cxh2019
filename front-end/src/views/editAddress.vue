@@ -32,16 +32,21 @@ export default {
     return {
       searchResult: [],
       addrSaving: false,
-      isNew: false
+      isNew: false,
+      come: ''
     }
   },
   mounted () {
     if (this.$route.params.isNew) this.isNew = true
+    this.come = this.$route.query.come || ''
   },
   methods: {
     onClickLeft () {
       this.$router.push({
-        path: '/address'
+        path: '/address',
+        query: {
+          come: this.come
+        }
       })
     },
     // 修改 详细地址（街道地址） 时触发

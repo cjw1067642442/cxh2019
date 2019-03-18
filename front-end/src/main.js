@@ -21,7 +21,10 @@ if (token) {
   store.state.token = token
 }
 
-window.goBackNative =  function () {}
+// 返回原生
+window.goBackNative =  function () {
+  location.href = 'goBackNative'
+}
 
 Vue.config.productionTip = false
 Vue.use(Vant)

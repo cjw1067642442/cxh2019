@@ -7,33 +7,36 @@
       :border='false'
       @click-left='onClickLeft'
     />
-    <div class='cart-list'>
-      <div class='cart-item' flex='cross:center main:justify' v-for='prod in shoppingList' :key='prod.product_id'>
-        <div class="check-box" :class="{'act-box': prod.selected}" @click="doSimgle(prod)"></div>
-        <div flex='' class='cart-main'>
-          <img :src='prod.product_img' alt=''/>
-          <div class=''>
-            <div class='tx-c-333'>{{prod.product_title}}</div>
-            <div class='tx-c-red'>¥{{prod.product_price}}</div>
+    <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+      <div class='cart-list'>
+        <div class='cart-item' flex='cross:center main:justify' v-for='prod in shoppingList' v-if="prod.quantity>0" :key='prod.product_id'>
+          <div class="check-box" :class="{'act-box': prod.selected}" @click="doSimgle(prod)"></div>
+          <div flex='' class='cart-main'>
+            <img :src='prod.product_img' alt=''/>
+            <div class=''>
+              <div class='tx-c-333'>{{prod.product_title}}</div>
+              <div class='tx-c-red'>¥{{prod.product_price}}</div>
+            </div>
           </div>
-        </div>
-        <div class=''>
-          <van-stepper
+          <div class=''>
+            <van-stepper
             v-model='prod.quantity'
             integer
-            :min='1'
+            :min='0'
             :max='10000'
+            @change="onChange(prod)"
             :step='1' />
+          </div>
         </div>
       </div>
-    </div>
+    </van-pull-refresh>
     <div class="stopp-cart-footer" flex="main:justify cross:center">
       <div @click="selectAllPro" flex="cross:center">
         <span class="check-box tx-c-666" :class="{'act-box': selectAll}"></span>
         <span class="chk-label tx-c-666">全选</span>
       </div>
       <div flex="cross:center" class="no-wrap">
-        <div class="com-msg tx-c-333">共{{allSelProdNum}}件商品&nbsp;合计：<strong class="tx-c-red">¥{{allSelMoney | rmb}}</strong></div>
+        <div class="com-msg tx-c-333">共{{allSelProdNum}}件&nbsp;合计：<strong class="tx-c-red">¥{{allSelMoney | rmb}}</strong></div>
         <van-button size="large" class="settlement-btn" :round="true" @click="payfor">结算</van-button>
       </div>
     </div>
@@ -49,25 +52,63 @@ export default {
       selectAll: false,
       // 是否 是 取消 一个
       isSimgleOne: false,
+      isLoading: false
       // shoppingList: []
     }
   },
   mounted () {
-    this.$ajax.get('/cart/index')
-      .then(({status, data, msg}) => {
-        if (parseInt(status) === 1) {
-          this.$store.commit('updateShoppingCart', data)
-        } else {
-          this.$toast(msg)
-        }
-      })
+    this.getData()
     // this.$store.state.shoppingList = []
   },
   methods: {
     onClickLeft () {
       window.goBackNative()
-
-      // this.$router.go(-1)
+      this.$router.go(-1)
+    },
+    onRefresh () {
+      this.getData()
+    },
+    getData () {
+      this.$ajax.get('/cart/index')
+        .then(({status, data, msg}) => {
+          if (parseInt(status) === 1) {
+            data.forEach(item => (item.selected = false))
+            this.$store.commit('updateShoppingCart', data)
+          } else {
+            this.$toast(msg)
+          }
+          this.loading = false
+        })
+        .catch(() => (this.loading = false))
+    },
+    onChange (prod, value) {
+      if (prod.quantity === 0) {
+        this.$dialog.confirm({
+          title: '删除商品',
+          message: '删除后需要重新添加到购物车'
+        })
+        .then(() => {
+          this.$ajax.post('/cart/mod', {
+            product_id: prod.product_id,
+            quantity: prod.quantity,
+            product_spec_id: prod.product_spec_id
+          })
+          .then(({status}) => {
+            if (parseInt(status) === 1) {
+              this.$toast('删除成功')
+            }
+          })
+        })
+        .catch(() => {
+          prod.quantity = 1
+        })
+      } else {
+        this.$ajax.post('/cart/mod', {
+          product_id: prod.product_id,
+          quantity: prod.quantity,
+          product_spec_id: prod.product_spec_id
+        })
+      }
     },
     // 全选的情况  取消 其中一个
     doSimgle (prod) {
@@ -119,7 +160,7 @@ export default {
       let result = 0;
       this.$store.state.shoppingList.forEach(item => {
         if (item.selected) {
-          result += item.quantity
+          result += parseInt(item.quantity)
         }
       })
       return result
@@ -161,9 +202,9 @@ export default {
 
       img {
         box-sizing: border-box;
-        margin-right: 13px;
-        width: 86px;
-        height: 90px;
+        margin-right: 8px;
+        width: 80px;
+        height: 88px;
       }
       &>div>div {
         &:first-child {

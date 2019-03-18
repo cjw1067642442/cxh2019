@@ -50,7 +50,14 @@ export default {
   },
   methods: {
     onClickLeft () {
-      this.$router.go(-1)
+      if (this.comeFrom) {
+        this.$router.push({
+          name: this.comeFrom
+        })
+      }
+      else {
+        window.goBackNative()
+      }
     },
     // 选择地址
     selAddr (addr) {
@@ -72,7 +79,10 @@ export default {
         isDefault: addr.is_default==='1'?true:false
       })
       this.$router.push({
-        name: 'editaddress'
+        name: 'editaddress',
+        query: {
+          come: this.comeFrom
+        }
       })
     },
     // 添加地址
@@ -82,6 +92,9 @@ export default {
         name: 'editaddress',
         params: {
           isNew: true
+        },
+        query: {
+          come: this.comeFrom
         }
       })
     }
@@ -117,7 +130,6 @@ export default {
         text-align: center;
         font-size: 12px;
         background-color: rgba(214, 69, 76, .3);
-        border: 1px dashed #999;
       }
       .gr-line {
         display: inline-block;

@@ -8,24 +8,26 @@
       :border='false'
       @click-left='onClickLeft'
     />
-    <div class="prod-img">
-      <van-swipe :autoplay="autoplay">
-        <van-swipe-item v-for="(img, i) in productMsg.thumb" :key="i">
-          <img :src="img" alt="">
-        </van-swipe-item>
-        <div slot="indicator"></div>
-      </van-swipe>
-    </div>
-    <div class="prod-main marg-5-bottom">
-      <div class="prod-name tx-c-333">{{productMsg.title}}</div>
-      <div class="prod-price"><strong class="tx-c-red">¥{{productMsg.price | rmb}}</strong></div>
-    </div>
-    <div class="prod-dec marg-5-bottom" flex="cross:center">
-      <span class="tx-c-999">说明:</span><span class="reword-icon">赠</span>&nbsp;&nbsp;<span class="tx-c-666">{{productMsg.member_points}}个沉香果</span>
-    </div>
-    <!-- <div class="prod-dec marg-5-bottom" flex="cross:center">
-      <span class="tx-c-999">邮费:</span>&nbsp;&nbsp;<span class="tx-c-666">15元</span>
-    </div> -->
+    <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+      <div class="prod-img">
+        <van-swipe :autoplay="autoplay">
+          <van-swipe-item v-for="(img, i) in productMsg.thumb" :key="i">
+            <img :src="img" alt="">
+          </van-swipe-item>
+          <div slot="indicator"></div>
+        </van-swipe>
+      </div>
+      <div class="prod-main marg-5-bottom">
+        <div class="prod-name tx-c-333">{{productMsg.title}}</div>
+        <div class="prod-price"><strong class="tx-c-red">¥{{productMsg.price | rmb}}</strong></div>
+      </div>
+      <div class="prod-dec marg-5-bottom" flex="cross:center">
+        <span class="tx-c-999">说明:</span><span class="reword-icon">赠</span>&nbsp;&nbsp;<span class="tx-c-666">{{productMsg.member_points}}个沉香果</span>
+      </div>
+      <!-- <div class="prod-dec marg-5-bottom" flex="cross:center">
+        <span class="tx-c-999">邮费:</span>&nbsp;&nbsp;<span class="tx-c-666">15元</span>
+      </div> -->
+    </van-pull-refresh>
     <div class="prod-nav">
       <van-tabs v-model="prodAct" :animated="true" :swipeable="true" :sticky="true">
         <van-tab title="图文详情">
@@ -69,7 +71,7 @@
           <div class="cond-spec" v-for="(spec, spIdx) in productMsg.spec">
             <p>{{spec.name}}</p>
             <div flex="">
-              <span v-for="(v, idx) in spec.value" :class="{'sel-spec': v.selected}" @click.stop.prevent="selSpec(spIdx,spec.id,spec.value,v)">{{v.key}}</span>
+              <span v-for="(v, idx) in spec.value" :class="{'sel-spec': v.selected}" @click.stop.prevent="selSpec(spIdx, v.id,spec.value,v)">{{v.key}}</span>
             </div>
           </div>
           <div class="cond-spec">
@@ -90,7 +92,7 @@ export default {
   data () {
     return {
       autoplay: 0,
-      page: 1,
+      isLoading: false,
       orderNum: 0,
       id: '',
       // 购买须知
@@ -122,41 +124,53 @@ export default {
     }
   },
   mounted () {
-    // this.$dialog.alert({
-    //   title: 'debugger',
-    //   message: location.href + '-debug'
-    // })
-    this.$ajax
-      .get('/product/details?id=' + this.$route.query.id)
-      .then(({status, data, msg}) => {
-        if (parseInt(status) === 1) {
-          (this.productMsg = this.addSpecMark(data))
-          this.purchaseNotes = data.purchaseNotes
-        } else {
-          this.$toast.fail(msg)
-        }
-      })
-      .catch(err => {
-        this.$toast.fail(JSON.stringify(err))
-      })
-    //
+    this.getDetails()
     this.getOrderNum()
   },
   methods: {
     onClickLeft () {
+      // 返回 原生
       window.goBackNative()
-      // 返回列表页
       // this.$router.push('/myOrders')
+    },
+    init () {
+      this.autoplay = 0
+      this.orderNum = 0
+    },
+    onRefresh () {
+      this.init()
+      this.getOrderNum()
+      this.getDetails()
+    },
+    getDetails () {
+      this.$ajax
+        .get('/product/details?id=' + this.$route.query.id)
+        .then(({status, data, msg}) => {
+          if (parseInt(status) === 1) {
+            (this.productMsg = this.addSpecMark(data))
+            this.autoplay = data.autoplay || 0
+          } else {
+            this.$toast.fail(msg)
+          }
+          this.isLoading = false
+        })
+        .catch(err => {
+          this.loading = false
+          this.$toast.fail(JSON.stringify(err))
+        })
+        this.$ajax.get('/article/shopNotice?id='+this.id)
+          .then(({status, data, msg}) => {
+            this.purchaseNotes = data.content || '暂无说明'
+          })
     },
     // 购物车数量
     getOrderNum () {
-      this.$ajax.get('order/list?status=1&page=' + this.page)
+      this.$ajax.get('/cart/')
         .then(({status, data, msg}) => {
           if (parseInt(status) === 1) {
-            this.page++
-            this.orderNum += data.length
-            if (data.length>0) this.getOrderNum()
+            this.orderNum = data.length
           }
+          this.isLoading = false
         })
     },
     addSpecMark (data) {
@@ -175,9 +189,10 @@ export default {
     },
     // 选择规格
     selSpec (idx, key, values, item) {
+      console.log(idx, key, values, item);
       this.selMark[idx] = key
-      console.log(this.selMark);
       if (this.selMark.length === this.spec_length) {
+
         if (this.productMsg.spec_price[this.selMark.join('_')]) {
           this.selectPrice = this.productMsg.spec_price[this.selMark.join('_')].price
         } else if (!this.selMark.join('_').match('__')) {
@@ -223,6 +238,7 @@ export default {
     },
     // 选择完毕规格 确定
     goToPay () {
+
       if (this.sureType === 'addCard') {
         this.postAddProd()
       }
@@ -380,7 +396,7 @@ export default {
     bottom: 0;
     z-index: 100;
     padding: 0 16px;
-    min-height: 350px;
+    min-height: 70%;
     background: #FFF;
     box-shadow: 0 0 20px 0px #ccc;
 
@@ -399,6 +415,8 @@ export default {
     .condition-content {
       margin: 10px 0 0 0;
       padding: 0 0 20px 0;
+      min-height: 300px;
+      overflow-y: auto;
     }
 
     .close-icon {

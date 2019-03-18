@@ -76,14 +76,14 @@ export default new Router({
       component: () => import(/* webpackChunkName: "payFor" */ './views/payFor.vue')
     },
     {
-      path: '/paym',
-      name: 'paym',
-      component: () => import(/* webpackChunkName: "paym" */ './views/payMoney.vue')
-    },
-    {
       path: '/tablist',
       name: 'tablist',
       component: () => import(/* webpackChunkName: "tablist" */ './views/tabList.vue')
+    },
+    {
+      path: '/vip',
+      name: 'vip',
+      component: () => import(/* webpackChunkName: "vip" */ './views/vip.vue')
     }
   ]
 })
