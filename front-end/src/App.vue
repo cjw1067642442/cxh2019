@@ -20,4 +20,7 @@ export default {
   font-size: 12px;
   height: 100%;
 }
+.scroll {
+  -webkit-overflow-scrolling: touch
+}
 </style>

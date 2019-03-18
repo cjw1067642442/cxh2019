@@ -144,6 +144,10 @@ export default {
             })
           })
         }
+        else {
+          let _msg = msg ? msg : '网络繁忙，请稍后重试'
+          this.$toast(_msg)
+        }
       })
     }
   }
@@ -177,7 +181,7 @@ export default {
     margin-top: 5px;
   }
   .pay-msg {
-    padding: 0 15px;
+    padding: 0 15px 50px 15px;
     font-size: 14px;
     background-color: #FFF;
 
@@ -211,6 +215,7 @@ export default {
       color: rgba(125,166,226,1);
       font-size: 10px;
       text-align: center;
+      white-space: nowrap;
       border:1px solid rgba(125,166,226,1);
       border-radius: 12px;
       background-color: #FFF;
