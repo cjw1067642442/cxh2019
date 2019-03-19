@@ -485,7 +485,7 @@ export default {
     line-height: 14px;
   }
   .card-content {
-    margin: 12px 0 0 0;
+    margin: 12px 0 10px 0;
   }
   .no-data {
     padding: 50px 0;
@@ -493,7 +493,7 @@ export default {
     font-size: 18px;
   }
   .card-res-box {
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     color: #333333;
 
     &:last-child {
