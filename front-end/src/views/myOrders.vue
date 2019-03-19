@@ -42,14 +42,19 @@
                   <span v-else class="tx-c-999">已取消</span>
                 </div>
                 <div class="card-content">
-                  <div flex="main:justify" class="card-res-box" v-for="prod in card.details">
-                    <div class="card-left" flex="dir:left">
-                      <img :src="prod.product_img" />
-                      <span>{{prod.product_title}}</span>
+                  <div v-for="prod in card.details">
+                    <div flex="main:justify" class="card-res-box">
+                      <div class="card-left" flex="dir:left">
+                        <img :src="prod.product_img" />
+                        <span>{{prod.product_title}}</span>
+                      </div>
+                      <div class="card-right" flex="dir:top">
+                        <span>{{prod.product_price}}</span>
+                        <span>x{{prod.quantity}}</span>
+                      </div>
                     </div>
-                    <div class="card-right" flex="dir:top">
-                      <span>{{prod.product_price}}</span>
-                      <span>x{{prod.quantity}}</span>
+                    <div class="tag-span">
+                      <span v-for="spec in dealSpec(prod.product_spec)" >{{spec.value}}</span>
                     </div>
                   </div>
                 </div>
@@ -83,14 +88,19 @@
                   <span class="not-completed-status">待支付</span>
                 </div>
                 <div class="card-content">
-                  <div flex="main:justify" class="card-res-box" v-for="prod in card.details">
-                    <div class="card-left" flex="dir:left">
-                      <img :src="prod.product_img" />
-                      <span>{{prod.product_title}}</span>
+                  <div v-for="prod in card.details">
+                    <div flex="main:justify" class="card-res-box" >
+                      <div class="card-left" flex="dir:left">
+                        <img :src="prod.product_img" />
+                        <span>{{prod.product_title}}</span>
+                      </div>
+                      <div class="card-right" flex="dir:top">
+                        <span>{{prod.product_price}}</span>
+                        <span>x{{prod.quantity}}</span>
+                      </div>
                     </div>
-                    <div class="card-right" flex="dir:top">
-                      <span>{{prod.product_price}}</span>
-                      <span>x{{prod.quantity}}</span>
+                    <div class="tag-span">
+                      <span v-for="spec in dealSpec(prod.product_spec)">{{spec.value}}</span>
                     </div>
                   </div>
                 </div>
@@ -122,14 +132,19 @@
                     <span class="not-completed-status">买家已付款</span>
                   </div>
                   <div class="card-content">
-                    <div flex="main:justify" class="card-res-box" v-for="prod in card.details">
-                      <div class="card-left" flex="dir:left">
-                        <img :src="prod.product_img" />
-                        <span>{{prod.product_title}}</span>
+                    <div v-for="prod in card.details">
+                      <div flex="main:justify" class="card-res-box">
+                        <div class="card-left" flex="dir:left">
+                          <img :src="prod.product_img" />
+                          <span>{{prod.product_title}}</span>
+                        </div>
+                        <div class="card-right" flex="dir:top">
+                          <span>{{prod.product_price}}</span>
+                          <span>x{{prod.quantity}}</span>
+                        </div>
                       </div>
-                      <div class="card-right" flex="dir:top">
-                        <span>{{prod.product_price}}</span>
-                        <span>x{{prod.quantity}}</span>
+                      <div class="tag-span">
+                        <span v-for="spec in dealSpec(prod.product_spec)">{{spec.value}}</span>
                       </div>
                     </div>
                   </div>
@@ -156,14 +171,19 @@
                   <span class="not-completed-status">待收货</span>
                 </div>
                 <div class="card-content">
-                  <div flex="main:justify" class="card-res-box" v-for="prod in card.details" v-if="prod.status==4">
-                    <div class="card-left" flex="dir:left">
-                      <img :src="prod.product_img" />
-                      <span>{{prod.product_title}}</span>
+                  <div v-for="prod in card.details"  v-if="prod.status==4">
+                    <div flex="main:justify" class="card-res-box">
+                      <div class="card-left" flex="dir:left">
+                        <img :src="prod.product_img" />
+                        <span>{{prod.product_title}}</span>
+                      </div>
+                      <div class="card-right" flex="dir:top">
+                        <span>{{prod.product_price}}</span>
+                        <span>x{{prod.quantity}}</span>
+                      </div>
                     </div>
-                    <div class="card-right" flex="dir:top">
-                      <span>{{prod.product_price}}</span>
-                      <span>x{{prod.quantity}}</span>
+                    <div class="tag-span">
+                      <span v-for="spec in dealSpec(prod.product_spec)">{{spec.value}}</span>
                     </div>
                   </div>
                 </div>
@@ -193,14 +213,19 @@
                   <span class="completed-status">交易成功</span>
                 </div>
                 <div class="card-content">
-                  <div flex="main:justify" class="card-res-box" v-for="prod in card.details">
-                    <div class="card-left" flex="dir:left">
-                      <img :src="prod.product_img" />
-                      <span>{{prod.product_title}}</span>
+                  <div v-for="prod in card.details"  v-if="prod.status==4">
+                    <div flex="main:justify" class="card-res-box">
+                      <div class="card-left" flex="dir:left">
+                        <img :src="prod.product_img" />
+                        <span>{{prod.product_title}}</span>
+                      </div>
+                      <div class="card-right" flex="dir:top">
+                        <span>{{prod.product_price}}</span>
+                        <span>x{{prod.quantity}}</span>
+                      </div>
                     </div>
-                    <div class="card-right" flex="dir:top">
-                      <span>{{prod.product_price}}</span>
-                      <span>x{{prod.quantity}}</span>
+                    <div class="tag-span">
+                      <span v-for="spec in dealSpec(prod.product_spec)">{{spec.value}}</span>
                     </div>
                   </div>
                 </div>
@@ -217,6 +242,8 @@
 </template>
 
 <script>
+import mixins from '../mixin/index.js'
+
 export default {
   data () {
     return {
@@ -252,6 +279,7 @@ export default {
       tabType: ''
     }
   },
+  mixins: [mixins],
   beforeMount() {
     if (this.$route.query.active) this.active = parseInt(this.$route.query.active)
     if (this.$route.params.active) this.active = parseInt(this.$route.params.active)
@@ -264,8 +292,6 @@ export default {
   methods: {
     onClickLeft () {
       window.goBackNative()
-
-      // this.$router.go(-1)
     },
     initData () {
       let type = this.getType()
@@ -385,6 +411,17 @@ export default {
           this.$toast(msg)
         })
     },
+    // // 处理规格
+    // dealSpec (jsonStr) {
+    //   console.log(jsonStr);
+    //   let result = []
+    //   try {
+    //     result = JSON.parse(jsonStr)
+    //   } catch (e) {
+    //     this.$toast(e)
+    //   }
+    //   return result
+    // },
     deletedOrder (card) {
       this.$dialog.confirm({
         title: '确认删除订单',

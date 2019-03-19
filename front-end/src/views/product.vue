@@ -189,18 +189,25 @@ export default {
     },
     // 选择规格
     selSpec (idx, key, values, item) {
-      this.selMark[idx] = key
+      // 取消 规格
+      if (item.selected) {
+        this.selectPrice = '---'
+        this.selMark[idx] = ''
+        item.selected = false
+        return
+      } else {
+        this.selMark[idx] = key
+      }
       if (this.selMark.length === this.spec_length) {
 
         if (this.productMsg.spec_price[this.selMark.join('_')]) {
           this.selectPrice = this.productMsg.spec_price[this.selMark.join('_')].price
-        } else if (!this.selMark.join('_').match('__')) {
+        }
+        else if (!this.selMark.join('_').match('__')) {
           this.selectPrice = '---'
-          item.selected = false
+          // item.selected = false
           this.$toast('暂时没有这个规格可选')
-          setTimeout(() => {
-            item.selected = false
-          }, 1000)
+          // item.selected = false
         }
       }
       //
@@ -240,18 +247,29 @@ export default {
       if (this.selMark.join('_').match('__')) {
         return this.$toast('请选择规格')
       }
+      // if (/(^_)|(_$)/.test(this.selMark.join('_'))) {
+      //   this.$dialog({
+      //     title: '错误',
+      //     message: '网络繁忙，请返回上一页后重试.__'
+      //   })
+      //   .then(() => {
+      //     this.onClickLeft()
+      //   })
+      // }
       if (this.sureType === 'addCard') {
         this.postAddProd()
       }
       // 立即购买
       else {
+        if (!this.productMsg.spec_price[this.selMark.join('_')]) this.$toast('请选择完整规格')
         let orderMsg = {
           product_id: this.productMsg.id,
           product_title: this.productMsg.title,
           product_price: this.selectPrice,
           quantity: this.selNum,
           product_spec_id: this.productMsg.spec_price[this.selMark.join('_')].id,
-          product_img: this.productMsg.thumb[0]
+          product_img: this.productMsg.thumb[0],
+          spec: [...this.productMsg.spec_price[this.selMark.join('_')].key]
         }
 
         // 计算总价

@@ -45,7 +45,7 @@
               <div>
                 <span class="label">汇款时备注内容</span>
                 <span class="tx-c-red">{{payment_no}}</span>
-                <input type="text" class="hide-inp" v-model="payment_no" :id="'memo'+pay.method" />
+                <input type="text" class="hide-inp" v-model="payment_no" readonly :id="'memo'+pay.method" />
               </div>
               <button type="button" @click="copyMemo(pay.method)">复制</button>
             </div>
@@ -60,7 +60,7 @@
               <div>
                 <span class="label">汇款时备注内容</span>
                 <span class="tx-c-red">{{payment_no}}</span>
-                <input type="text" class="hide-inp" v-model="payment_no" :id="'memo'+pay.method" />
+                <input type="text" class="hide-inp" v-model="payment_no" readonly :id="'memo'+pay.method" />
               </div>
               <button type="button" @click="copyMemo(pay.method)">复制</button>
             </div>

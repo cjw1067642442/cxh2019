@@ -41,14 +41,19 @@
       </div>
     </div>
     <div class="card-content">
-      <div flex="main:justify" class="card-res-box" v-for="prod in data.details">
-        <div class="card-left" flex="dir:left">
-          <img :src="prod.product_img" />
-          <span>{{prod.product_title}}</span>
+      <div v-for="prod in data.details">
+        <div flex="main:justify" class="card-res-box">
+          <div class="card-left" flex="dir:left">
+            <img :src="prod.product_img" />
+            <span>{{prod.product_title}}</span>
+          </div>
+          <div class="card-right" flex="dir:top">
+            <span>{{prod.product_price}}</span>
+            <span>x{{prod.quantity}}</span>
+          </div>
         </div>
-        <div class="card-right" flex="dir:top">
-          <span>{{prod.product_price}}</span>
-          <span>x{{prod.quantity}}</span>
+        <div class="tag-span">
+          <span v-for="spec in dealSpec(prod.product_spec)" >{{spec.value}}</span>
         </div>
       </div>
       <!-- 待付款 -->
@@ -126,6 +131,7 @@
 
 <script>
   import moment from 'moment'
+  import mixins from '../mixin/index.js'
 
   export default {
     name: 'orderDetail',
@@ -147,6 +153,7 @@
           this.data = data
         })
     },
+    mixins: [mixins],
     methods: {
       onClickLeft () {
         this.$router.push({
@@ -258,6 +265,10 @@
     .card-content {
       padding: 16px 15px 12px 16px;
       background-color: #fff;
+
+      .tag-span {
+        padding: 0 0 5px;
+      }
     }
     .card-res-box {
       margin-bottom: 20px;

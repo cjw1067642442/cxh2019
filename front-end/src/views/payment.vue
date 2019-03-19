@@ -9,7 +9,7 @@
     />
     <!-- 地址 -->
     <div class="paid-addr" flex="cross:center main:justify">
-      <div flex="cross:center main:justify" v-if="selAddrMsg">
+      <div flex="cross:center main:justify" v-if="selAddrMsg" @click="selAddr">
         <span class="addr-icon"></span>
         <div class="addr-tx">
           <div>{{selAddrMsg.name}}</div>
@@ -21,15 +21,20 @@
     </div>
     <!-- 商品列表 -->
     <div class='cart-list'>
-      <div class='cart-item' flex='cross:center main:justify' v-for='prod in selectedList' :key='prod.product_id'>
-        <div flex='' class='cart-main'>
-          <img :src='prod.product_img' alt=''/>
-          <div class=''>
-            <div class='tx-c-333'>{{prod.product_title}}</div>
-            <div class='tx-c-red'>¥{{prod.product_price}}</div>
+      <div class='cart-item' v-for='prod in selectedList' :key='prod.product_id'>
+        <div  flex='cross:center main:justify'>
+          <div flex='' class='cart-main'>
+            <img :src='prod.product_img' alt=''/>
+            <div class=''>
+              <div class='tx-c-333'>{{prod.product_title}}</div>
+              <div class='tx-c-red'>¥{{prod.product_price}}</div>
+            </div>
           </div>
+          <div class="cart-qua tx-c-666">x{{prod.quantity}}</div>
         </div>
-        <div class="cart-qua tx-c-666">x{{prod.quantity}}</div>
+        <div class="tag-span">
+          <span v-for="spec in prod.spec" >{{spec}}</span>
+        </div>
       </div>
     </div>
     <div class="stopp-cart-footer" flex="dir:right cross:center">
@@ -173,8 +178,8 @@ export default {
     box-sizing: border-box;
     margin-bottom: 10px;
     padding: 15px;
-    // border-radius: 6px;
     background: #FFF;
+    // border-radius: 6px;
 
     .cart-main {
 
