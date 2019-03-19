@@ -10,7 +10,7 @@
     <div class="redeem-win">
       <div class="pos-to-cny">
         <div class="redeem-title tx-c-333 van-hairline--bottom" flex="cross:center main:center" @click.stop="onChangeCurrency">
-          <template v-if="from_currency === 'CXH'">
+          <template v-if="from_currency === 'cxh'">
             <span>CXH(个)</span><i class="red-icon"></i><span>余额(元)</span>
           </template>
           <template v-else>
@@ -18,23 +18,23 @@
           </template>
         </div>
         <div class="redeem-form van-hairline--bottom" flex="cross:center">
-          <span class="form-labal">数量({{this.from_currency==='CXH'?'CXH':'元'}})</span>
+          <span class="form-labal">数量({{this.from_currency==='cxh'?'CXH':'元'}})</span>
           <input flex-box="2" type="number" v-if="!noChangeStatus" v-model="number" placeholder="请输入您要兑换的数量" @keyup.enter="sureToChange" />
           <input flex-box="2" readonly v-else placeholder="暂无兑现" />
         </div>
         <div class="redeem-dec">
           <p flex="cross:center main:justify">
             <span class="tx-c-666">当前汇率:</span>
-            <span class="tx-c-333" v-if="this.from_currency==='CXH'">1&nbsp;CXH&nbsp;=&nbsp;{{rules.fee_rate}}&nbsp;元</span>
+            <span class="tx-c-333" v-if="this.from_currency==='cxh'">1&nbsp;CXH&nbsp;=&nbsp;{{rules.fee_rate}}&nbsp;元</span>
             <span class="tx-c-333" v-else>1&nbsp;元&nbsp;=&nbsp;{{rules.fee_rate}}&nbsp;CXH</span>
           </p>
           <p flex="cross:center main:justify">
             <span class="tx-c-666">可用余额:</span>
-            <span class="tx-c-666"><span class="tx-c-green">{{assets | rmb}}</span>&nbsp;{{this.from_currency==='CXH'?'CXH':'元'}}</span>
+            <span class="tx-c-666"><span class="tx-c-green">{{assets | rmb}}</span>&nbsp;{{this.from_currency==='cxh'?'CXH':'元'}}</span>
           </p>
           <p flex="cross:center main:justify">
             <span class="tx-c-666">手续费:</span>
-            <span class="tx-c-666"><span class="tx-c-red">{{number ? ((rules.fee_rate * number).toFixed(2)) : '--'}}</span>&nbsp;{{this.to_currency==='CXH'?'CXH':'元'}}</span>
+            <span class="tx-c-666"><span class="tx-c-red">{{number ? ((rules.fee_rate * number).toFixed(2)) : '--'}}</span>&nbsp;{{this.to_currency==='cxh'?'CXH':'元'}}</span>
           </p>
         </div>
         <div class="sub-btn-group">
@@ -91,7 +91,7 @@ export default {
       number: '',
       history: [],
       page: 1,
-      from_currency: 'CXH',
+      from_currency: 'cxh',
       to_currency: 'cny',
       noChangeStatus: false,
       assets: 0,
@@ -181,6 +181,7 @@ export default {
           this.assets = data.asset
           this.page = 1
           this.finished = false
+          this.onLoad()
         }
         this.$toast(msg)
       })

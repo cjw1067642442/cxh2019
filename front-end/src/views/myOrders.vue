@@ -34,7 +34,7 @@
               >
               <van-cell class="my-card" v-for="card in all.list" :key="card.id" @click.stop.prevent="checkOrderDetail(card)">
                 <div class="card-title" flex="main:justify">
-                  <span class="card-oid">订单编号:{{card.id}}</span>
+                  <span class="card-oid">订单编号:{{card.order_no}}</span>
                   <span v-if="card.status==1" class="not-completed-status">待支付</span>
                   <span v-else-if="card.status==2" class="not-completed-status">待发货</span>
                   <span v-else-if="card.status==3" class="not-completed-status">待收货</span>
@@ -77,9 +77,9 @@
               :offset="listOffset"
               @load="onLoad"
               >
-              <van-cell class="my-card" v-for="card in toBePaid.list" :key="card.id" @click.stop.prevent="checkOrderDetail(card)">
+              <van-cell class="my-card" v-for="card in toBePaid.list" :key="card.id" @click.stop.prevent="checkOrderDetail(card)" v-if="card.status == 1">
                 <div class="card-title" flex="main:justify">
-                  <span class="card-oid">订单编号:{{card.id}}</span>
+                  <span class="card-oid">订单编号:{{card.order_no}}</span>
                   <span class="not-completed-status">待支付</span>
                 </div>
                 <div class="card-content">
@@ -118,7 +118,7 @@
                 >
                 <van-cell class="my-card" v-for="card in toBeDelivered.list" :key="card.id" @click.stop.prevent="checkOrderDetail(card)">
                   <div class="card-title" flex="main:justify">
-                    <span class="card-oid">订单编号:{{card.id}}</span>
+                    <span class="card-oid">订单编号:{{card.order_no}}</span>
                     <span class="not-completed-status">买家已付款</span>
                   </div>
                   <div class="card-content">
@@ -152,7 +152,7 @@
               >
               <van-cell class="my-card" v-for="card in pendingReceipt.list" :key="card.id" @click.stop.prevent="checkOrderDetail(card)">
                 <div class="card-title" flex="main:justify">
-                  <span class="card-oid">订单编号:{{card.id}}</span>
+                  <span class="card-oid">订单编号:{{card.order_no}}</span>
                   <span class="not-completed-status">待收货</span>
                 </div>
                 <div class="card-content">
@@ -189,7 +189,7 @@
               >
               <van-cell class="my-card" v-for="card in completed.list" :key="card.id" @click.stop.prevent="checkOrderDetail(card)">
                 <div class="card-title" flex="main:justify">
-                  <span class="card-oid">订单编号:{{card.id}}</span>
+                  <span class="card-oid">订单编号:{{card.order_no}}</span>
                   <span class="completed-status">交易成功</span>
                 </div>
                 <div class="card-content">
