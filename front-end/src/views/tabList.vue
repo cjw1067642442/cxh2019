@@ -64,7 +64,7 @@ export default {
   created () {
     let { title, active = 0, where='user_net' } = this.$route.query
     this.active = 0
-    this.headerTitle = '列表标题'
+    this.headerTitle = title || '默认标题'
     this.$ajax.get('/common/tablist?where='+where)
       .then(({status, data, msg}) => {
         if (parseInt(status) === 1) {
@@ -75,11 +75,14 @@ export default {
         this.onLoad('isChange')
       })
       .catch(() => {
-        this.$toast('网络错误，请返回上一页后重新打开')
+        this.$dialog({
+          title: '错误',
+          message: location.href
+        })
       })
   },
   mounted () {
-    // this.changeTab()
+    this.changeTab()
   },
   methods: {
     onClickLeft () {

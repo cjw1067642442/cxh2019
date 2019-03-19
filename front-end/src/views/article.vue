@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="vip-dec">
+  <div class="vip-dec scroll">
     <van-nav-bar
       title='会员权益'
       left-text=''
@@ -8,22 +8,22 @@
       :border='false'
       @click-left='onClickLeft'
     />
-    <div class="member-line" v-html="content">
-    </div>
+    <div class="member-line" v-html="content"></div>
   </div>
 </template>
 
 <script>
 export default {
+  name: 'article',
   data () {
     return {
       title: '',
-      content: '...'
+      content: ''
     }
   },
   mounted () {
-    this.title = this.$route.query.title || '老板没有给标题'
-    this.$ajax.get('/article/vip')
+    this.title = this.$route.query.title || '老板没有给标题哦'
+    this.$ajax.get(`/article/${this.$route.query.url}`)
       .then(({status, data, msg}) => {
         this.content = data.content
       })
@@ -42,5 +42,9 @@ export default {
 <style lang="scss">
 .vip-dec {
   padding: 46px 10px 0;
+
+  .member-line {
+    padding: 5px;
+  }
 }
 </style>

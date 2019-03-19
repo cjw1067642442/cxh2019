@@ -9,7 +9,7 @@
     />
     <div>
       <van-list
-        v-loading="loading"
+        v-model="loading"
         :finished="finished"
         finished-text="没有更多了"
         @load="onload"
@@ -17,14 +17,15 @@
         class="prod-list"
         >
         <van-cell v-for="prod in list" class="prod-item" flex="dir:top">
-          <div class="tx-c-666">
-            <img src="" alt="">
-            <div flex="main:justify">
-              <strong class="tx-c-red fs-18">￥700.00</strong>
-              <span class="fs-9">赠122个</span>
+          <div>
+            <div class="tx-c-666">
+              <img :src="prod.thumb" alt="" />
+              <div flex="main:justify" class="flex-wrap">
+                <strong class="tx-c-red fs-18">￥{{prod.price}}</strong>
+                <span class="fs-9 no-wrap"><span class="reword-icon">赠</span>{{prod.member_points}}个</span>
+              </div>
+              <p>{{prod.title}}</p>
             </div>
-            <p>名称</p>
-            <div class="fs-9">描述</div>
           </div>
         </van-cell>
       </van-list>
@@ -36,21 +37,38 @@
 export default {
   data () {
     return {
-      headerTitle: 'title',
+      headerTitle: '精品分享',
       loading: false,
       finished: false,
-      list: [1,2,3,5,6,7,8]
+      list: [],
+      cate_id: 8,
+      page: 1
     }
+  },
+  mounted () {
+    this.cate_id = this.$route.query.cate_id || 8
   },
   methods: {
     onClickLeft () {
       window.goBackNative()
     },
     getList () {
-      // this.$ajax
+      this.$ajax.get(`/product/list?cate_id=${this.cate_id}&page=${this.page}`)
+        .then(({status, data, msg}) => {
+          if (parseInt(status) === 1) {
+            this.page++
+            if (data.products.length === 0) this.finished = true
+            this.list =  [...this.list, ...data.products]
+          }
+          this.loading = false
+        })
+        .catch(() => {
+          this.finished = false
+          this.loading = false
+        })
     },
     onload () {
-
+      this.getList()
     }
   }
 }
@@ -63,6 +81,16 @@ export default {
   .prod-list {
     padding: 15px;
     flex-wrap: wrap;
+
+    .van-list__loading {
+      flex-shrink: 0;
+      width: 100%;
+      text-align: center;
+    }
+    .van-list__finished-text {
+      width: 100%;
+      text-align: center;
+    }
   }
   .fs-18 {
     font-size: 18px;
@@ -84,10 +112,27 @@ export default {
       margin-bottom: 8px;
       width: 160px;
       height: 170px;
-      border: 1px solid #ccc;
     }
+
+    .reword-icon {
+      margin-right: 5px;
+      display: inline-block;
+      width: 20px;
+      height: 16px;
+      font-size: 10px;
+      line-height: 16px;
+      color: #FFF;
+      text-align: center;
+      border-radius: 4px;
+      background-color: #D6454C;
+    }
+
     p {
       margin: 0;
+      max-width: 100%;
+      white-space: nowrap;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
       line-height: 22px;
     }
 

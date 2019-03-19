@@ -109,6 +109,12 @@ export default new Router({
       path: '/vip',
       name: 'vip',
       component: () => import(/* webpackChunkName: "vip" */ './views/vip.vue')
+    },
+    // 公共文章模版
+    {
+      path: '/article',
+      name: 'article',
+      component: () => import(/* webpackChunkName: "article" */ './views/article.vue')
     }
   ]
 })

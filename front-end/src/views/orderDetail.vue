@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="order-detail">
+  <div class="order-detail scroll">
     <van-nav-bar
       title="订单详情"
       left-text=""

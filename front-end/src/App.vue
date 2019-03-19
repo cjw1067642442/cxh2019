@@ -14,7 +14,10 @@ export default {
       let { status, data, msg } = res
       if (parseInt(status) != 1) {
         let _msg = msg ? msg : '网络繁忙，请稍后重试'
-        if (this.$toast) this.$toast(_msg)
+        if (this.$toast) this.$dialog({
+          title: '网络繁忙，请稍后重试',
+          message: _msg
+        })
       }
       return res
     },

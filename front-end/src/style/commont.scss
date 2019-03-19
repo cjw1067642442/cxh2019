@@ -28,7 +28,9 @@ html,body {
 .no-wrap {
   white-space: nowrap;
 }
-
+.flex-wrap {
+  flex-wrap: wrap;
+}
 .orange-btn {
   color: #FF8955;
   border: none;
