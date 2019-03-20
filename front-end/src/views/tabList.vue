@@ -62,12 +62,12 @@ export default {
     }
   },
   created () {
-    let { title, active = 0, where='user_net' } = this.$route.query
+    let { title, active = 0, where='' } = this.$route.query
     this.active = 0
     this.headerTitle = title || '默认标题'
     this.$ajax.get('/common/tablist?where='+where)
       .then(({status, data, msg}) => {
-        if (parseInt(status) === 1) {
+        if (parseInt(status) === 1 && data) {
           this.tabList = [...data]
         } else {
           this.$toast(msg)
@@ -79,6 +79,8 @@ export default {
           title: '错误',
           message: location.href
         })
+        this.loading = false
+        this.finished = true
       })
   },
   mounted () {
@@ -99,8 +101,13 @@ export default {
     onLoad (isChange) {
       if (this.page === 1 && !isChange) return
       let tab = this.tabList[this.active]
-      console.log(this.tabList, this.active);
-      this.$ajax.get(`${tab.url.replace('/app', '')}&page=${this.page}`)
+      let url = ''
+      if (tab.url.match('?')) {
+        url += ('&page=' +this.page)
+      } else {
+        url += ('?page=' +this.page)
+      }
+      this.$ajax.get(url.replace('/app', ''))
         .then(({status, data, msg}) => {
           if (parseInt(status) === 1) {
             this.page++

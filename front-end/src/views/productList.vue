@@ -17,7 +17,7 @@
         class="prod-list"
         >
         <van-cell v-for="prod in list" class="prod-item" flex="dir:top">
-          <div>
+          <router-link :to="{ name: 'product', query: { id: prod.id, come: 'prodlist' } }" tag="div">
             <div class="tx-c-666">
               <img :src="prod.thumb" alt="" />
               <div flex="main:justify" class="flex-wrap">
@@ -26,7 +26,7 @@
               </div>
               <p>{{prod.title}}</p>
             </div>
-          </div>
+          </router-link>
         </van-cell>
       </van-list>
     </div>
@@ -96,7 +96,7 @@ export default {
     font-size: 18px;
   }
   .fs-9  {
-    font-size: 9px;
+    font-size: 10px;
   }
   .prod-item {
     margin-bottom: 10px;
@@ -104,7 +104,7 @@ export default {
     padding: 0;
     width: 50%;
     flex-shrink: 0;
-    background: #f1f1f1;
+    background: #FFF;
 
     img {
       box-sizing: border-box;

@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="vip-dec scroll">
     <van-nav-bar
-      title='会员权益'
+      :title='title'
       left-text=''
       left-arrow
       fixed
@@ -26,6 +26,7 @@ export default {
     this.$ajax.get(`/article/${this.$route.query.url}`)
       .then(({status, data, msg}) => {
         this.content = data.content
+        this.title = data.title
       })
       .catch(() => {
         this.$toast('网络繁忙，请稍后重试')

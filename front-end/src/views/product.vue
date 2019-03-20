@@ -129,8 +129,12 @@ export default {
   },
   methods: {
     onClickLeft () {
-      // 返回 原生
-      window.goBackNative()
+      if (this.$route.query.come) {
+        this.$router.push('/' + this.$route.query.come)
+      } else {
+        // 返回 原生
+        window.goBackNative()
+      }
       // this.$router.push('/myOrders')
     },
     init () {

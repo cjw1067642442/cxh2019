@@ -14,10 +14,14 @@ export default {
       let { status, data, msg } = res
       if (parseInt(status) != 1) {
         let _msg = msg ? msg : '网络繁忙，请稍后重试'
-        if (this.$toast) this.$dialog({
+        if (this.$dialog) this.$dialog({
           title: '网络繁忙，请稍后重试',
           message: _msg
         })
+      }
+      // 非法 token
+      if (parseInt(status) === 2 || parseInt(status) === 403) {
+        this.$router.push('/login')
       }
       return res
     },
