@@ -8,8 +8,8 @@
       @click-left='onClickLeft'
     />
     <!-- 地址 -->
-    <div class="paid-addr" flex="cross:center main:justify">
-      <div flex="cross:center main:justify" v-if="selAddrMsg" @click="selAddr">
+    <div class="paid-addr" flex="cross:center main:justify" @click="selAddr">
+      <div flex="cross:center main:justify" v-if="selAddrMsg" >
         <span class="addr-icon"></span>
         <div class="addr-tx">
           <div>{{selAddrMsg.name}}</div>
@@ -84,7 +84,11 @@ export default {
   },
   methods: {
     onClickLeft () {
-      this.$router.go(-1)
+      if (this.$route.query.come) {
+        this.$router.push('/' + this.$route.query.come)
+      } else {
+        window.goBackNative()
+      }
     },
     payforMoney () {
       let data = {
@@ -107,9 +111,6 @@ export default {
           succMsg = '提交成功'
         }
         this.$toast(succMsg)
-      })
-      .catch(err => {
-        this.$toast(JSON.stringify(err))
       })
     },
     selAddr () {

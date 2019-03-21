@@ -22,7 +22,7 @@ export default {
     }
   },
   mounted () {
-    this.title = this.$route.query.title || '老板没有给标题哦'
+    this.title = this.$route.query.title || '---'
     this.$ajax.get(`/article/${this.$route.query.url}`)
       .then(({status, data, msg}) => {
         this.content = data.content
@@ -46,6 +46,10 @@ export default {
 
   .member-line {
     padding: 5px;
+
+    img {
+      width: 100%;
+    }
   }
 }
 </style>

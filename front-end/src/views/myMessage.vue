@@ -55,7 +55,6 @@ export default {
           this.finished = false
           this.loading = false
           this.error = true
-          this.$toast('网络错误，请稍后重试')
         })
     }
   }

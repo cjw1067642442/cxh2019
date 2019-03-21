@@ -16,7 +16,7 @@
         flex=""
         class="prod-list"
         >
-        <van-cell v-for="prod in list" class="prod-item" flex="dir:top">
+        <van-cell v-for="prod in list" class="prod-item" flex="dir:top main:center">
           <router-link :to="{ name: 'product', query: { id: prod.id, come: 'prodlist' } }" tag="div">
             <div class="tx-c-666">
               <img :src="prod.thumb" alt="" />
@@ -76,7 +76,7 @@ export default {
 
 <style lang="scss">
 .product-list-win {
-  background: #f2f2f3;
+  background: #FFF;
 
   .prod-list {
     padding: 15px;
@@ -104,7 +104,6 @@ export default {
     padding: 0;
     width: 50%;
     flex-shrink: 0;
-    background: #FFF;
 
     img {
       box-sizing: border-box;

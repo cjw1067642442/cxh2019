@@ -232,9 +232,6 @@ export default {
           this.$toast('商品添加成功')
         }
       })
-      .catch(err => {
-        this.$toast(JSON.stringify(msg))
-      })
     },
     // 加入购物车
     addCard () {
@@ -280,7 +277,10 @@ export default {
         this.$store.commit('changeAllMoney', orderMsg.product_price * orderMsg.quantity)
         this.$store.commit('orderNow', orderMsg)
         this.$router.push({
-          path: '/payment',
+          name: 'payment',
+          query: {
+            come: 'product'
+          }
         })
       }
     }

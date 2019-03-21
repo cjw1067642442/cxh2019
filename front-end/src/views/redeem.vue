@@ -108,11 +108,12 @@ export default {
     }
   },
   mounted () {
-    // this.history = require('../../data-factory/redeemlist.json')
-    if (this.$route.query.from_currency) {
+    let { from_currency, to_currency } = this.$route.query
+    if (from_currency && to_currency) {
       this.from_currency = this.$route.query.from_currency
       this.to_currency = this.$route.query.to_currency
     }
+
     this.getRules()
   },
   methods: {
@@ -124,8 +125,9 @@ export default {
       let ofrom_cu = this.from_currency
       this.from_currency = this.to_currency
       this.to_currency = ofrom_cu
+      this.history.length = 0
       this.number = ''
-
+      // this.$toast(`from:${this.from_currency} -- to:${this.to_currency}`)
       this.getRules()
         .then(() => {
           this.page = 1
@@ -137,15 +139,17 @@ export default {
     onLoad () {
       this.$ajax
         .get(`/user/currencyExchangeHis?page=${this.page}&from_currency=${this.from_currency}&to_currency=${this.to_currency}`)
-        .then(({data, msg}) => {
-          this.page++
+        .then(({status, data, msg}) => {
+          if (parseInt(status) === 1) {
+            this.page++
+            if (data.length === 0) this.finished = true
+            this.history = [...this.history, ...data]
+          } else {
+            this.finished = true
+          }
           this.loading = false
-          if (data.length === 0) this.finished = true
-          this.history = [...this.history, ...data]
         })
-        .catch(err => {
-          this.$toast(JSON.stringify(err))
-        })
+
     },
     getRules () {
       return this.$ajax.get(`/user/exchangeRules?from_currency=${this.from_currency}&to_currency=${this.to_currency}`)
@@ -153,6 +157,7 @@ export default {
           if (parseInt(status) === 1) {
             if (data.rules && Object.prototype.toString.call(data.rules) === '[object Object]') {
               (this.rules = data.rules)
+              this.noChangeStatus = false
             }
             else {
               this.noChangeStatus = true
@@ -166,7 +171,6 @@ export default {
         })
         .catch((err) => {
           this.dataLoading = false
-          this.$toast(JSON.stringify(err))
         })
     },
     sureToChange () {
@@ -184,9 +188,6 @@ export default {
           this.onLoad()
         }
         this.$toast(msg)
-      })
-      .catch(err => {
-        this.$toast(JSON.stringify(err))
       })
     }
   },

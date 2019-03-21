@@ -355,7 +355,6 @@ export default {
         .catch(err => {
           this.loading = false
           this.error = true
-          this.$toast(err + 'order/list')
         })
     },
     compQua (list) {

@@ -102,9 +102,7 @@ export default {
           this.$toast(msg)
         }
       })
-      .catch(err => {
-        this.$toast(JSON.stringify(err))
-      })
+      
   },
   methods: {
     onClickLeft () {

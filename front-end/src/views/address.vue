@@ -51,7 +51,10 @@ export default {
     onClickLeft () {
       if (this.comeFrom) {
         this.$router.push({
-          name: this.comeFrom
+          name: this.comeFrom,
+          query: {
+            come: this.comeFrom
+          }
         })
       }
       else {

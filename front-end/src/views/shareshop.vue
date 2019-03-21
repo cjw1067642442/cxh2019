@@ -32,9 +32,6 @@ export default {
         // this.content = data.content
         console.log(data);
       })
-      .catch(() => {
-        this.$toast('网络繁忙，请稍后重试')
-      })
   },
   methods: {
     onClickLeft () {

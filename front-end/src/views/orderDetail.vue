@@ -182,12 +182,6 @@
               })
             }
           })
-          .catch(err => {
-            this.$dialog.alert({
-              title: '失败',
-              message: '请稍后重试'
-            })
-          })
       },
       // 修改订单
       fixedOrder () {

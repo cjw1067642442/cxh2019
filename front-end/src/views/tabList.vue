@@ -64,17 +64,17 @@ export default {
   created () {
     let { title, active = 0, where='' } = this.$route.query
     this.active = 0
-    this.headerTitle = title || '默认标题'
+    this.headerTitle = title || '---'
     this.$ajax.get('/common/tablist?where='+where)
       .then(({status, data, msg}) => {
         if (parseInt(status) === 1 && data) {
           this.tabList = [...data]
+          this.onLoad('isChange')
         } else {
           this.$toast(msg)
         }
-        this.onLoad('isChange')
       })
-      .catch(() => {
+      .catch((e) => {
         this.$dialog({
           title: '错误',
           message: location.href
@@ -84,14 +84,14 @@ export default {
       })
   },
   mounted () {
-    this.changeTab()
+    // this.changeTab()
   },
   methods: {
     onClickLeft () {
       window.goBackNative()
     },
     init () {
-      this.list.length = 0
+      this.tabList.length = 0
       this.page = 1
     },
     changeTab () {
@@ -99,13 +99,14 @@ export default {
       this.onLoad('change')
     },
     onLoad (isChange) {
+
       if (this.page === 1 && !isChange) return
       let tab = this.tabList[this.active]
       let url = ''
-      if (tab.url.match('?')) {
-        url += ('&page=' +this.page)
+      if (tab.url.match(/\?/g)) {
+        url += (tab.url + '&page=' +this.page)
       } else {
-        url += ('?page=' +this.page)
+        url += (tab.url + '?page=' +this.page)
       }
       this.$ajax.get(url.replace('/app', ''))
         .then(({status, data, msg}) => {

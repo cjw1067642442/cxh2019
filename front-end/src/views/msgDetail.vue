@@ -35,12 +35,6 @@ export default {
           this.content  = data.content
           this.create_time  = data.create_time
         }
-        else {
-          this.$toast('网络繁忙，请稍后重试.' +msg)
-        }
-      })
-      .catch(() => {
-        this.$toast('网络繁忙，请稍后重试')
       })
     // this.$ajax.get('')
   },

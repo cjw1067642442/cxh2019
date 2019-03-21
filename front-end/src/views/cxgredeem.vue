@@ -9,8 +9,9 @@
     />
     <div class="redeem-win">
       <div class="pos-to-cny">
-        <div class="redeem-title tx-c-333 van-hairline--bottom" flex="cross:center main:center" @click.stop="onChangeCurrency">
-          <span>沉香果(个)</span><i class="red-icon"></i><span>CXH(个)</span>
+        <div class="redeem-title tx-c-333 van-hairline--bottom" flex="cross:center main:center" @click="onChangeCurrency">
+          <template v-if="to_currency==='cxh'"><span>沉香果(个)</span><i class="red-icon"></i><span>CXH(个)</span></template>
+          <template v-else><span>CXH(个)</span><i class="red-icon"></i><span>沉香果(个)</span></template>
         </div>
         <div class="redeem-form van-hairline--bottom" flex="cross:center">
           <span class="form-labal">数量(个)</span>
@@ -20,11 +21,13 @@
         <div class="redeem-dec">
           <p flex="cross:center main:justify">
             <span class="tx-c-666">当前汇率:</span>
-            <span class="tx-c-333">1&nbsp;沉香果&nbsp;=&nbsp;{{rules.fee_rate}}&nbsp;CXH</span>
+            <span class="tx-c-333" v-if="to_currency==='cxh'">1&nbsp;沉香果&nbsp;=&nbsp;{{rules.fee_rate}}&nbsp;CXH</span>
+            <span class="tx-c-333" v-else>1&nbsp;CXH&nbsp;=&nbsp;{{rules.fee_rate}}&nbsp;沉香果</span>
           </p>
           <p flex="cross:center main:justify">
             <span class="tx-c-666">可用余额:</span>
-            <span class="tx-c-666"><span class="tx-c-green">{{assets | rmb}}</span>&nbsp;沉香果(个)</span>
+            <span class="tx-c-666" v-if="to_currency==='cxh'"><span class="tx-c-green">{{assets | rmb}}</span>&nbsp;沉香果(个)</span>
+            <span class="tx-c-666" v-else><span class="tx-c-green" >{{assets | rmb}}</span>&nbsp;CXH</span>
           </p>
           <p flex="cross:center main:justify">
             <span class="tx-c-666">手续费:</span>
@@ -53,7 +56,7 @@
           <p class="tx-c-999">{{item.create_time | time}}</p>
           <div class="" flex="main:justify cross:center">
             <div flex="dir:top">
-              <span class="tx-c-999">数量({{from_currency.toUpperCase()}})</span>
+              <span class="tx-c-999 upper">数量({{from_currency}})</span>
               <span>{{item.quantity}}</span>
             </div>
             <div flex="dir:top">
@@ -102,11 +105,12 @@ export default {
     }
   },
   mounted () {
-    // this.history = require('../../data-factory/redeemlist.json')
-    if (this.$route.query.from_currency) {
-      this.from_currency = this.$route.query.from_currency
-      this.to_currency = this.$route.query.to_currency
+    let { from_currency, to_currency } = this.$route.query
+    if (from_currency && to_currency) {
+      this.from_currency = from_currency
+      this.to_currency = to_currency
     }
+
     this.getRules()
   },
   methods: {
@@ -115,11 +119,13 @@ export default {
     },
     onChangeCurrency () {
       this.dataLoading = true
-      let ofrom_cu = this.from_currency
+
+      let ofrom_cu = this.from_currency + ''
       this.from_currency = this.to_currency
       this.to_currency = ofrom_cu
-      this.number = ''
 
+      this.history.length = 0
+      this.number = ''
       this.getRules()
         .then(() => {
           this.page = 1
@@ -131,14 +137,19 @@ export default {
     onLoad () {
       this.$ajax
         .get(`/user/currencyExchangeHis?page=${this.page}&from_currency=${this.from_currency}&to_currency=${this.to_currency}`)
-        .then(({data, msg}) => {
-          this.page++
+        .then(({status, data, msg}) => {
+          if (parseInt(status) === 1){
+            this.page++
+            if (data.length === 0) this.finished = true
+            this.history = [...this.history, ...data]
+          } else {
+            this.finished = true
+          }
           this.loading = false
-          if (data.length === 0) this.finished = true
-          this.history = [...this.history, ...data]
         })
-        .catch(err => {
-          this.$toast(JSON.stringify(err))
+        .catch(() => {
+          this.loading = false
+          this.finished = true
         })
     },
     getRules () {
@@ -147,6 +158,7 @@ export default {
           if (parseInt(status) === 1) {
             if (data.rules && Object.prototype.toString.call(data.rules) === '[object Object]') {
               (this.rules = data.rules)
+              this.noChangeStatus = false
             }
             else {
               this.noChangeStatus = true
@@ -160,7 +172,6 @@ export default {
         })
         .catch((err) => {
           this.dataLoading = false
-          this.$toast(JSON.stringify(err))
         })
     },
     sureToChange () {
@@ -178,9 +189,7 @@ export default {
         }
         this.$toast(msg)
       })
-      .catch(err => {
-        this.$toast(JSON.stringify(err))
-      })
+
     }
   },
   watch: {

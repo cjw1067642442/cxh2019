@@ -77,9 +77,6 @@ export default {
             this.$toast(msg)
           }
         })
-        .catch(() => {
-          this.$toast('网络错误，请稍后重试')
-        })
     },
     // 删除地址
     onDelete () {

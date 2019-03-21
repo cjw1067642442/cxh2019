@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="vip-dec">
     <van-nav-bar
-      title='会员权益'
+      :title='title'
       left-text=''
       left-arrow
       fixed
@@ -22,7 +22,7 @@ export default {
     }
   },
   mounted () {
-    this.title = this.$route.query.title || '老板没有给标题'
+    this.title = this.$route.query.title || '---'
     this.$ajax.get('/article/vip')
       .then(({status, data, msg}) => {
         this.content = data.content
@@ -42,5 +42,9 @@ export default {
 <style lang="scss">
 .vip-dec {
   padding: 46px 10px 0;
+
+  img {
+    width: 100%;
+  }
 }
 </style>
